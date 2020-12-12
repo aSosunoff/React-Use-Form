@@ -12,20 +12,28 @@ const INITIAL_FORM = {
 	},
 	login: {
 		value: "",
-		validation: { required: true },
+		validation: {
+			required: {
+				message: "Необходимо заполнить поле",
+			},
+		},
 		type: "text",
 		label: "Логин",
-		invalidMessage: "Необходимо заполнить поле",
 	},
 	password: {
 		value: "",
 		validation: {
-			required: true,
-			minLength: 4,
+			required: {
+				message: "Необходимо заполнить поле",
+			},
+			minLength: {
+				value: 4,
+				message: "Поле должно быть больше 4 символов",
+			},
 		},
 		type: "password",
 		label: "Пароль",
-		invalidMessage: "Необходимо заполнить поле",
+		/* invalidMessage: "Необходимо заполнить поле", */
 	},
 };
 
@@ -45,7 +53,7 @@ const App = () => {
 		},
 		[values]
 	);
-	
+
 	return (
 		<form
 			className="card hoverable"

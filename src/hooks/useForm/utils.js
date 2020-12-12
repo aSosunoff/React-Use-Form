@@ -14,21 +14,31 @@ export const valid = (value, validation = null) => {
 	const { required, minLength, email } = validation;
 
 	let invalid = false;
+	let invalidMessage = "";
+
+	const getInvalidMessage = (type) =>
+		!invalidMessage && invalid
+			? type.message ?? invalidMessage
+			: invalidMessage;
 
 	if (required) {
 		invalid = is.empty(value) || invalid;
+		invalidMessage = getInvalidMessage(required);
 	}
 
 	if (minLength) {
-		invalid = `${value}`.length < minLength || invalid;
+		invalid = `${value}`.length < minLength.value || invalid;
+		invalidMessage = getInvalidMessage(minLength);
 	}
 
 	if (email) {
 		invalid = is.email(value) || invalid;
+		invalidMessage = getInvalidMessage(email);
 	}
 
 	return {
 		invalid,
+		invalidMessage,
 	};
 };
 
