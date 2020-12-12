@@ -45,7 +45,7 @@ const App = () => {
 		},
 		[values]
 	);
-	console.log(handlers);
+	
 	return (
 		<form
 			className="card hoverable"
