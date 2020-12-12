@@ -4,7 +4,7 @@ import Input from "../UI/input";
 import BlackButton from "../UI/button/blackButton";
 import Progress from "../UI/progress/Progress";
 
-const INITIAL_VALUES = {
+const INITIAL_FORM = {
 	login: {
 		value: "",
 		validation: { required: true },
@@ -21,7 +21,7 @@ const INITIAL_VALUES = {
 const App = () => {
 	const [loading, setLoading] = useState(false);
 
-	const { values, handlers, isDisabledAll } = useForm(INITIAL_VALUES);
+	const { values, handlers, isDisabledAll } = useForm(INITIAL_FORM);
 
 	const submitHandler = useCallback(
 		(e) => {
