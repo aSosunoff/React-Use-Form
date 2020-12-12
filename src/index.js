@@ -73,16 +73,13 @@ export const useForm = (initialForm = {}) => {
 
   const isFormInvalid = useMemo(
     () =>
-      Object.values(handlers).reduce(
-        (acc, { invalid }) => acc || invalid,
-        false
-      ),
-    [handlers]
+      Object.values(form).reduce((acc, { invalid }) => acc || invalid, false),
+    [form]
   );
 
   const reset = useCallback(() => {
-    setForm(initialForm);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    setForm(reduceConfigTransform(initialForm, buildControl));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {
