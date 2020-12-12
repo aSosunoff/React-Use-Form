@@ -191,13 +191,13 @@ var useForm = function useForm() {
     });
   }, [onChange, form]);
   var isFormInvalid = (0,external_react_.useMemo)(function () {
-    return Object.values(handlers).reduce(function (acc, _ref2) {
+    return Object.values(form).reduce(function (acc, _ref2) {
       var invalid = _ref2.invalid;
       return acc || invalid;
     }, false);
-  }, [handlers]);
+  }, [form]);
   var reset = (0,external_react_.useCallback)(function () {
-    setForm(initialForm); // eslint-disable-next-line react-hooks/exhaustive-deps
+    setForm(reduceConfigTransform(initialForm, buildControl)); // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return {
     values: values,
