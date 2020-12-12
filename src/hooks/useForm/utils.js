@@ -1,5 +1,5 @@
 import is from "is_js";
-
+window.is = is;
 export const buildControl = (config) => ({
 	...config,
 	touched: false,
@@ -16,7 +16,7 @@ export const valid = (value, validation = null) => {
 	let invalid = false;
 
 	if (required) {
-		invalid = `${value}`.trim() === "" || invalid;
+		invalid = is.empty(value) || invalid;
 	}
 
 	if (minLength) {
