@@ -26,7 +26,11 @@ const App = () => {
 	const submitHandler = useCallback(
 		(e) => {
 			e.preventDefault();
-			console.log(values);
+			setLoading(true);
+			setTimeout(() => {
+				setLoading(false);
+				console.log(values);
+			}, 1000);
 		},
 		[values]
 	);
