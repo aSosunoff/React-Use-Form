@@ -1,26 +1,26 @@
 import { useCallback, useMemo, useState } from "react";
-import { valid, isValuePrimitive, forMap } from "./utils";
+import { valid, isPrimitive, forMap } from "./utils";
 
-export const useForm = (initialValues = {}) => {
-	const [form, setForm] = useState(initialValues);
+export const useForm = (initialForm = {}) => {
+	const [form, setForm] = useState(initialForm);
 
 	const values = useMemo(
 		() =>
 			forMap(form, ([key, value]) =>
-				isValuePrimitive(value) ? [key, value] : [key, value.value]
+				isPrimitive(value) ? [key, value] : [key, value.value]
 			),
 		[form]
 	);
 
 	const [touched, setTouched] = useState(
-		forMap(initialValues, ([key]) => [key, false])
+		forMap(initialForm, ([key]) => [key, false])
 	);
 
 	const setValue = useCallback((key, value) => {
 		if (typeof key === "object") {
 			setForm((prev) =>
 				forMap(prev, ([field, value]) =>
-					isValuePrimitive(value)
+					isPrimitive(value)
 						? [field, key[field]]
 						: [field, { ...value, value: key[field] }]
 				)
@@ -47,7 +47,7 @@ export const useForm = (initialValues = {}) => {
 	const handlers = useMemo(
 		() =>
 			forMap(form, ([key, value]) =>
-				isValuePrimitive(value)
+				isPrimitive(value)
 					? [key, { value, onChange: onChange(key) }]
 					: [
 							key,
@@ -62,7 +62,7 @@ export const useForm = (initialValues = {}) => {
 		[onChange, form, touched]
 	);
 
-	const isDisabledAll = useMemo(
+	const isFormValid = useMemo(
 		() =>
 			Object.values(handlers).reduce(
 				(acc, { invalid }) => acc || invalid,
@@ -72,8 +72,8 @@ export const useForm = (initialValues = {}) => {
 	);
 
 	const reset = useCallback(() => {
-		setTouched(forMap(initialValues, ([key]) => [key, false]));
-		setForm(initialValues);
+		setTouched(forMap(initialForm, ([key]) => [key, false]));
+		setForm(initialForm);
 		// eslint-disable-next-line
 	}, [setTouched, setForm]);
 
@@ -82,6 +82,6 @@ export const useForm = (initialValues = {}) => {
 		reset,
 		handlers,
 		setValue,
-		isDisabledAll,
+		isFormValid,
 	};
 };

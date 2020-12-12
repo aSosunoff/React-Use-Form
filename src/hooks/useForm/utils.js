@@ -13,8 +13,7 @@ export const valid = (value, { required, minLength }) => {
 	};
 };
 
-export const isValuePrimitive = (value) =>
-	!(typeof value === "object" && value !== null);
+export const isPrimitive = (value) => value !== Object(value);
 
 export const forMap = (obj, callback) =>
 	Object.fromEntries(Object.entries(obj).map(callback));
