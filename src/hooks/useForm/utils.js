@@ -1,5 +1,5 @@
 import is from "is_js";
-window.is = is;
+
 export const buildControl = (config) => ({
 	...config,
 	touched: false,
