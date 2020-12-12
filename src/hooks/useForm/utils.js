@@ -1,19 +1,41 @@
-export const valid = (value, { required, minLength }) => {
-	const isRequired = required && value.trim() === "";
+import is from "is_js";
 
-	const isMinLength = minLength && value.length < minLength;
+export const buildControl = (config) => ({
+	...config,
+	touched: false,
+	invalid: Boolean(config.validation),
+});
+
+export const valid = (value, validation = null) => {
+	if (!validation) {
+		return false;
+	}
+
+	const { required, minLength, email } = validation;
+
+	let invalid = false;
+
+	if (required) {
+		invalid = `${value}`.trim() === "" || invalid;
+	}
+
+	if (minLength) {
+		invalid = `${value}`.length < minLength || invalid;
+	}
+
+	if (email) {
+		invalid = is.email(value) || invalid;
+	}
 
 	return {
-		invalid: isRequired || isMinLength || false,
-		invalidMessage: isRequired
-			? "Необходимо заполнить поле"
-			: isMinLength
-			? `Длина должна быть не меньше ${minLength} символов`
-			: "",
+		invalid,
 	};
 };
 
 export const isPrimitive = (value) => value !== Object(value);
 
-export const forMap = (obj, callback) =>
-	Object.fromEntries(Object.entries(obj).map(callback));
+export const reduceConfigTransform = (obj, callback) =>
+	Object.entries(obj).reduce(
+		(acc, [key, config]) => ({ ...acc, [key]: callback(config, key) }),
+		{}
+	);

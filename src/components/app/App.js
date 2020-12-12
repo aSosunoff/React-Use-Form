@@ -5,9 +5,17 @@ import BlackButton from "../UI/button/blackButton";
 import Progress from "../UI/progress/Progress";
 
 const INITIAL_FORM = {
+	text: {
+		value: "",
+		type: "text",
+		label: "text",
+	},
 	login: {
 		value: "",
 		validation: { required: true },
+		type: "text",
+		label: "Логин",
+		invalidMessage: "Необходимо заполнить поле",
 	},
 	password: {
 		value: "",
@@ -15,13 +23,16 @@ const INITIAL_FORM = {
 			required: true,
 			minLength: 4,
 		},
+		type: "password",
+		label: "Пароль",
+		invalidMessage: "Необходимо заполнить поле",
 	},
 };
 
 const App = () => {
 	const [loading, setLoading] = useState(false);
 
-	const { values, handlers, isDisabledAll } = useForm(INITIAL_FORM);
+	const { values, handlers, isFormInvalid } = useForm(INITIAL_FORM);
 
 	const submitHandler = useCallback(
 		(e) => {
@@ -34,7 +45,7 @@ const App = () => {
 		},
 		[values]
 	);
-
+	console.log(handlers);
 	return (
 		<form
 			className="card hoverable"
@@ -45,30 +56,22 @@ const App = () => {
 			onSubmit={submitHandler}
 		>
 			<div className="card-content">
-				<Input
-					label="Логин"
-					value={handlers.login.value}
-					disabled={loading}
-					onChange={handlers.login.onChange}
-					invalid={handlers.login.touched && handlers.login.invalid}
-					invalidMessage={handlers.login.invalidMessage}
-				/>
-
-				<Input
-					label="Пароль"
-					type="password"
-					disabled={loading}
-					value={handlers.password.value}
-					onChange={handlers.password.onChange}
-					invalid={handlers.password.touched && handlers.password.invalid}
-					invalidMessage={handlers.password.invalidMessage}
-				/>
+				{Object.entries(handlers).map(([key, config]) => (
+					<Input
+						key={key}
+						label={config.label}
+						value={config.value}
+						disabled={loading}
+						onChange={config.onChange}
+						invalid={config.touched && config.invalid}
+						invalidMessage={config.invalidMessage}
+					/>
+				))}
 			</div>
 
 			<div className="card-action">
-				<BlackButton type="submit" disabled={isDisabledAll || loading}>
+				<BlackButton type="submit" disabled={isFormInvalid || loading}>
 					Войти
-					<i className="material-icons right">send</i>
 				</BlackButton>
 			</div>
 

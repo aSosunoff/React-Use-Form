@@ -1,35 +1,54 @@
 import { useCallback, useMemo, useState } from "react";
-import { valid, isPrimitive, forMap } from "./utils";
+import {
+	isPrimitive,
+	valid,
+	buildControl,
+	reduceConfigTransform,
+} from "./utils";
 
 export const useForm = (initialForm = {}) => {
-	const [form, setForm] = useState(initialForm);
+	const [form, setForm] = useState(
+		reduceConfigTransform(initialForm, buildControl)
+	);
 
 	const values = useMemo(
-		() =>
-			forMap(form, ([key, value]) =>
-				isPrimitive(value) ? [key, value] : [key, value.value]
-			),
+		() => reduceConfigTransform(form, ({ value }) => value),
 		[form]
 	);
 
-	const [touched, setTouched] = useState(
-		forMap(initialForm, ([key]) => [key, false])
-	);
-
-	const setValue = useCallback((key, value) => {
+	const setValue = useCallback((key, value, touched) => {
 		if (typeof key === "object") {
 			setForm((prev) =>
-				forMap(prev, ([field, value]) =>
-					isPrimitive(value)
-						? [field, key[field]]
-						: [field, { ...value, value: key[field] }]
-				)
+				reduceConfigTransform(prev, (config, field) => {
+					if (!(field in key)) {
+						return config;
+					}
+
+					let _value;
+					let _touched;
+
+					if (isPrimitive(key[field])) {
+						_value = key[field];
+					} else {
+						_value = key[field].value;
+						_touched = key[field].touched;
+					}
+
+					return {
+						...config,
+						...valid(_value, config.validation),
+						touched: _touched ?? config.touched,
+						value: _value ?? config.value,
+					};
+				})
 			);
 		} else {
 			setForm((prev) => ({
 				...prev,
 				[key]: {
 					...prev[key],
+					...valid(value, prev[key].validation),
+					touched: touched ?? prev[key].touched,
 					value,
 				},
 			}));
@@ -38,31 +57,21 @@ export const useForm = (initialForm = {}) => {
 
 	const onChange = useCallback(
 		(key) => (ev) => {
-			setTouched((prev) => ({ ...prev, [key]: true }));
-			setValue(key, ev.target ? ev.target.value : ev);
+			setValue(key, ev.target ? ev.target.value : ev, true);
 		},
-		[setValue, setTouched]
+		[setValue]
 	);
 
 	const handlers = useMemo(
 		() =>
-			forMap(form, ([key, value]) =>
-				isPrimitive(value)
-					? [key, { value, onChange: onChange(key) }]
-					: [
-							key,
-							{
-								...valid(value.value, value.validation),
-								touched: touched[key],
-								value: value.value,
-								onChange: onChange(key),
-							},
-					  ]
-			),
-		[onChange, form, touched]
+			reduceConfigTransform(form, (config, key) => ({
+				...config,
+				onChange: onChange(key),
+			})),
+		[onChange, form]
 	);
 
-	const isFormValid = useMemo(
+	const isFormInvalid = useMemo(
 		() =>
 			Object.values(handlers).reduce(
 				(acc, { invalid }) => acc || invalid,
@@ -72,16 +81,15 @@ export const useForm = (initialForm = {}) => {
 	);
 
 	const reset = useCallback(() => {
-		setTouched(forMap(initialForm, ([key]) => [key, false]));
 		setForm(initialForm);
 		// eslint-disable-next-line
-	}, [setTouched, setForm]);
+	}, [setForm]);
 
 	return {
 		values,
 		reset,
 		handlers,
 		setValue,
-		isFormValid,
+		isFormInvalid,
 	};
 };
