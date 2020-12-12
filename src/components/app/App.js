@@ -33,7 +33,6 @@ const INITIAL_FORM = {
 		},
 		type: "password",
 		label: "Пароль",
-		/* invalidMessage: "Необходимо заполнить поле", */
 	},
 };
 
