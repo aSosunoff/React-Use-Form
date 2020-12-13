@@ -32,7 +32,7 @@ export const valid = (value, validation = null) => {
   }
 
   if (email) {
-    invalid = is.email(value) || invalid;
+    invalid = is.not.email(value) || invalid;
     invalidMessage = getInvalidMessage(email);
   }
 

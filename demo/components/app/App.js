@@ -11,6 +11,16 @@ const INITIAL_FORM = {
     type: "text",
     label: "text",
   },
+  email: {
+    value: "",
+    type: "email",
+    label: "email",
+    validation: {
+      email: {
+        message: "Не правильно введён email",
+      },
+    },
+  },
   login: {
     value: "",
     validation: {
