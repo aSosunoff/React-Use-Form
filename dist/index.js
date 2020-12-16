@@ -11,7 +11,7 @@
 return /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 912:
+/***/ 392:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -25,9 +25,6 @@ __webpack_require__.d(__webpack_exports__, {
 
 // EXTERNAL MODULE: external "react"
 var external_react_ = __webpack_require__(297);
-// EXTERNAL MODULE: ../node_modules/is_js/is.js
-var is = __webpack_require__(808);
-var is_default = /*#__PURE__*/__webpack_require__.n(is);
 ;// CONCATENATED MODULE: ./utils.js
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
@@ -47,51 +44,11 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-
-var buildControl = function buildControl(config) {
+var initialControl = function initialControl(config) {
   return _objectSpread(_objectSpread({}, config), {}, {
     touched: false,
     invalid: Boolean(config.validation)
   });
-};
-var valid = function valid(value) {
-  var validation = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-
-  if (!validation) {
-    return false;
-  }
-
-  var required = validation.required,
-      minLength = validation.minLength,
-      email = validation.email;
-  var invalid = false;
-  var invalidMessage = "";
-
-  var getInvalidMessage = function getInvalidMessage(type) {
-    var _type$message;
-
-    return !invalidMessage && invalid ? (_type$message = type.message) !== null && _type$message !== void 0 ? _type$message : invalidMessage : invalidMessage;
-  };
-
-  if (required) {
-    invalid = is_default().empty(value) || invalid;
-    invalidMessage = getInvalidMessage(required);
-  }
-
-  if (minLength) {
-    invalid = "".concat(value).length < minLength.value || invalid;
-    invalidMessage = getInvalidMessage(minLength);
-  }
-
-  if (email) {
-    invalid = is_default().email(value) || invalid;
-    invalidMessage = getInvalidMessage(email);
-  }
-
-  return {
-    invalid: invalid,
-    invalidMessage: invalidMessage
-  };
 };
 var isPrimitive = function isPrimitive(value) {
   return value !== Object(value);
@@ -105,6 +62,50 @@ var reduceConfigTransform = function reduceConfigTransform(obj, callback) {
     return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, key, callback(config, key)));
   }, {});
 };
+// EXTERNAL MODULE: ../node_modules/is_js/is.js
+var is = __webpack_require__(808);
+var is_default = /*#__PURE__*/__webpack_require__.n(is);
+;// CONCATENATED MODULE: ./validation.js
+
+/* harmony default export */ const validation = (function (value) {
+  var validation = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+  if (!validation) {
+    return false;
+  }
+
+  var required = validation.required,
+      minLength = validation.minLength,
+      email = validation.email;
+  var invalid = false;
+  var invalidMessage = "";
+
+  var getInvalidMessage = function getInvalidMessage(validationType) {
+    var _validationType$messa;
+
+    return !invalidMessage && invalid ? (_validationType$messa = validationType.message) !== null && _validationType$messa !== void 0 ? _validationType$messa : invalidMessage : invalidMessage;
+  };
+
+  if (required) {
+    invalid = is_default().empty(value) || invalid;
+    invalidMessage = getInvalidMessage(required);
+  }
+
+  if (minLength) {
+    invalid = "".concat(value).length < minLength.value || invalid;
+    invalidMessage = getInvalidMessage(minLength);
+  }
+
+  if (email) {
+    invalid = is_default().not.email(value) || invalid;
+    invalidMessage = getInvalidMessage(email);
+  }
+
+  return {
+    invalid: invalid,
+    invalidMessage: invalidMessage
+  };
+});
 ;// CONCATENATED MODULE: ./index.js
 function index_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
@@ -128,10 +129,11 @@ function index_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
+
 var useForm = function useForm() {
   var initialForm = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-  var _useState = (0,external_react_.useState)(reduceConfigTransform(initialForm, buildControl)),
+  var _useState = (0,external_react_.useState)(reduceConfigTransform(initialForm, initialControl)),
       _useState2 = index_slicedToArray(_useState, 2),
       form = _useState2[0],
       setForm = _useState2[1];
@@ -163,7 +165,7 @@ var useForm = function useForm() {
             _touched = key[field].touched;
           }
 
-          return index_objectSpread(index_objectSpread(index_objectSpread({}, config), valid(_value, config.validation)), {}, {
+          return index_objectSpread(index_objectSpread(index_objectSpread({}, config), validation(_value, config.validation)), {}, {
             touched: (_touched2 = _touched) !== null && _touched2 !== void 0 ? _touched2 : config.touched,
             value: (_value2 = _value) !== null && _value2 !== void 0 ? _value2 : config.value
           });
@@ -171,7 +173,7 @@ var useForm = function useForm() {
       });
     } else {
       setForm(function (prev) {
-        return index_objectSpread(index_objectSpread({}, prev), {}, index_defineProperty({}, key, index_objectSpread(index_objectSpread(index_objectSpread({}, prev[key]), valid(value, prev[key].validation)), {}, {
+        return index_objectSpread(index_objectSpread({}, prev), {}, index_defineProperty({}, key, index_objectSpread(index_objectSpread(index_objectSpread({}, prev[key]), validation(value, prev[key].validation)), {}, {
           touched: touched !== null && touched !== void 0 ? touched : prev[key].touched,
           value: value
         })));
@@ -197,7 +199,7 @@ var useForm = function useForm() {
     }, false);
   }, [form]);
   var reset = (0,external_react_.useCallback)(function () {
-    setForm(reduceConfigTransform(initialForm, buildControl)); // eslint-disable-next-line react-hooks/exhaustive-deps
+    setForm(reduceConfigTransform(initialForm, initialControl)); // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return {
     values: values,
@@ -1206,7 +1208,7 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__297__;
 /******/ 	// module exports must be returned from runtime so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(912);
+/******/ 	return __webpack_require__(392);
 /******/ })()
 ;
 });
