@@ -1,14 +1,10 @@
 import { useCallback, useMemo, useState } from "react";
-import {
-  isPrimitive,
-  valid,
-  buildControl,
-  reduceConfigTransform,
-} from "./utils";
+import { isPrimitive, initialControl, reduceConfigTransform } from "./utils";
+import validation from "./validation";
 
 export const useForm = (initialForm = {}) => {
   const [form, setForm] = useState(
-    reduceConfigTransform(initialForm, buildControl)
+    reduceConfigTransform(initialForm, initialControl)
   );
 
   const values = useMemo(
@@ -36,7 +32,7 @@ export const useForm = (initialForm = {}) => {
 
           return {
             ...config,
-            ...valid(_value, config.validation),
+            ...validation(_value, config.validation),
             touched: _touched ?? config.touched,
             value: _value ?? config.value,
           };
@@ -47,7 +43,7 @@ export const useForm = (initialForm = {}) => {
         ...prev,
         [key]: {
           ...prev[key],
-          ...valid(value, prev[key].validation),
+          ...validation(value, prev[key].validation),
           touched: touched ?? prev[key].touched,
           value,
         },
@@ -78,7 +74,7 @@ export const useForm = (initialForm = {}) => {
   );
 
   const reset = useCallback(() => {
-    setForm(reduceConfigTransform(initialForm, buildControl));
+    setForm(reduceConfigTransform(initialForm, initialControl));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
