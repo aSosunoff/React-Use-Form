@@ -2,7 +2,7 @@ import React from "react";
 import cn from "classnames";
 import styles from "./EmptyLayout.module.scss";
 
-const EmptyLayout = ({ children }) => (
+const EmptyLayout: React.FC = ({ children }) => (
   <div
     className={cn(
       styles["grid-layout"],
