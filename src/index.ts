@@ -1,8 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import {
-  isPrimitive,
-  /* initialControl,  */ reduceConfigTransform,
-} from "./utils";
+import { isPrimitive, reduceConfigTransform } from "./utils";
 
 export type InitialForm<T extends keyof any> = {
   [key in T]: {

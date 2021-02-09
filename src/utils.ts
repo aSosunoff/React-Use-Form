@@ -8,7 +8,7 @@ export const isPrimitive = <T>(value: T) => value !== Object(value);
 type ReduceConfigTransformType = <
   TObject extends Record<string, any>,
   Key extends keyof TObject,
-  Result // extends Record<string, any>
+  Result
 >(
   obj: TObject,
   callback: (config: TObject[Key], key: Key, obj?: TObject) => Result
