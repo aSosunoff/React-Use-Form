@@ -11,8 +11,6 @@ import styles from "./App.module.scss";
 const INITIAL_FORM: InitialForm<"text" | "email" | "login" | "password"> = {
   text: {
     value: "",
-    type: "text",
-    label: "text",
   },
   email: {
     value: "",
@@ -23,8 +21,6 @@ const INITIAL_FORM: InitialForm<"text" | "email" | "login" | "password"> = {
         };
       }
     },
-    type: "email",
-    label: "email",
   },
   login: {
     value: "",
@@ -35,8 +31,6 @@ const INITIAL_FORM: InitialForm<"text" | "email" | "login" | "password"> = {
         };
       }
     },
-    type: "text",
-    label: "Логин",
   },
   password: {
     value: "",
@@ -53,17 +47,18 @@ const INITIAL_FORM: InitialForm<"text" | "email" | "login" | "password"> = {
         };
       }
     },
-    type: "password",
-    label: "Пароль",
   },
 };
 
 const App = () => {
   const [loading, setLoading] = useState(false);
 
-  const { values, handlers, isInvalidForm, resetHandler } = useForm(
-    INITIAL_FORM
-  );
+  const {
+    values,
+    handlers: { text, email, login, password },
+    isInvalidForm,
+    resetHandler,
+  } = useForm(INITIAL_FORM);
 
   const submitHandler = useCallback(
     (e) => {
@@ -88,18 +83,45 @@ const App = () => {
       onReset={resetHandler}
     >
       <div className="card-content">
-        {Object.entries(handlers).map(([key, config]) => (
-          <Input
-            key={key}
-            label={config.label}
-            value={config.value}
-            disabled={loading}
-            onChange={config.onChange}
-            invalid={config.touched && config.invalid}
-            invalidMessage={config.error?.errorMessage}
-            type={config.type}
-          />
-        ))}
+        <Input
+          value={text.value}
+          disabled={loading}
+          onChange={text.onChange}
+          invalid={text.touched && text.invalid}
+          invalidMessage={text.error?.errorMessage}
+          type="text"
+          label="text"
+        />
+
+        <Input
+          value={email.value}
+          disabled={loading}
+          onChange={email.onChange}
+          invalid={email.touched && email.invalid}
+          invalidMessage={email.error?.errorMessage}
+          label="email"
+          type="email"
+        />
+
+        <Input
+          value={login.value}
+          disabled={loading}
+          onChange={login.onChange}
+          invalid={login.touched && login.invalid}
+          invalidMessage={login.error?.errorMessage}
+          label="Логин"
+          type="text"
+        />
+
+        <Input
+          value={password.value}
+          disabled={loading}
+          onChange={password.onChange}
+          invalid={password.touched && password.invalid}
+          invalidMessage={password.error?.errorMessage}
+          label="Пароль"
+          type="password"
+        />
       </div>
 
       <div className={cn("card-action", styles["card-action"])}>

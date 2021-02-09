@@ -11,7 +11,6 @@ export type InitialForm<T extends keyof any> = {
       | {
           errorMessage: string;
         };
-    [key: string]: any;
   };
 };
 
