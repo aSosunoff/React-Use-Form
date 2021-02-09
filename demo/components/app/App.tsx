@@ -4,7 +4,7 @@ import { useForm, InitialForm } from "../../../src";
 /* import { useForm } from "../../../dist"; */
 import Input from "../UI/input";
 import BlackButton from "../UI/button/blackButton";
-import Progress from "../UI/progress/Progress";
+import Progress from "../UI/progress";
 
 const INITIAL_FORM: InitialForm<"text" | "email" | "login" | "password"> = {
   text: {

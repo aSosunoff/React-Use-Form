@@ -1,11 +1,20 @@
 import React from "react";
-import PropTypes from "prop-types";
 import cn from "classnames";
 import styles from "./BaseButton.module.scss";
 
-const BaseButton = ({
-  tag,
-  type,
+export interface BaseButtonProps extends React.HTMLProps<HTMLButtonElement> {
+  tag?: "button" | "a" | "Link";
+  type: "button" | "submit" | "reset";
+  disabled?: boolean;
+  invalid?: boolean;
+  invalidMessage?: string | any;
+  classNameContainer?: string;
+  classNameButton?: string;
+}
+
+export const BaseButton: React.FC<BaseButtonProps> = ({
+  tag = "button",
+  type = "button",
   disabled,
   invalid,
   invalidMessage,
@@ -48,17 +57,4 @@ const BaseButton = ({
   ]);
 };
 
-BaseButton.defaultProps = {
-  tag: "button",
-  type: "button",
-};
-
-BaseButton.propTypes = {
-  tag: PropTypes.oneOf(["button", "a", "Link"]),
-  type: PropTypes.oneOf(["button", "submit", "reset"]),
-  disabled: PropTypes.bool,
-  invalid: PropTypes.bool,
-  invalidMessage: PropTypes.string,
-};
-
-export default BaseButton;
+/* export default BaseButton; */
