@@ -28,7 +28,7 @@ type SetValueKey<T extends InitialForm<any>> = {
       };
 };
 
-const initialFn = (initialForm: InitialForm<any>) =>
+const initialFn = <T extends InitialForm<any>>(initialForm: T) =>
   reduceConfigTransform(initialForm, (config) => {
     const error = config.validation && config.validation(config.value);
     return {
