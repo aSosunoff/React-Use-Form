@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import is from "is_js";
 import { useForm, InitialForm } from "../../../src";
-/* import { useForm } from "../../../dist"; */
+/* import { useForm, InitialForm } from "../../../dist"; */
 import Input from "../UI/input";
 import BlackButton from "../UI/button/blackButton";
 import Progress from "../UI/progress";
