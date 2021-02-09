@@ -63,12 +63,12 @@
   },
   "scripts": {
     "serve": "cross-env webpack serve --mode development --open",
-    "dist": "webpack --config ./webpack/webpack.dist.js --mode production",
-    "build": "cross-env NODE_ENV=production webpack --config ./webpack/webpack.prod.js --mode production",
-    "lint": "eslint src",
-    "test": "jest --watchAll",
-    "predeploy": "cross-env GP_DEPLOY=true NODE_ENV=production webpack --config ./webpack/webpack.prod.js --mode production",
+    "dist": "cross-env CONFIG=dist webpack --mode production",
+    "build": "cross-env CONFIG=production webpack --mode production",
+    "predeploy": "cross-env GP_DEPLOY=true CONFIG=production webpack --mode production",
     "deploy": "gh-pages -d build",
+    "lint": "eslint src demo",
+    "test": "jest --watchAll",
     "prepublish": "npm prune",
     "run_all": "npm run dist && npm run deploy && npm publish && git add . && git commit -m \"run dist\" && git push"
   },
