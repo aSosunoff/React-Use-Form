@@ -56,5 +56,3 @@ export const BaseButton: React.FC<BaseButtonProps> = ({
     invalidElement,
   ]);
 };
-
-/* export default BaseButton; */

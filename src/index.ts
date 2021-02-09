@@ -28,23 +28,19 @@ type SetValueKey<T extends InitialForm<any>> = {
       };
 };
 
-export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
-  const initialFn = useCallback(
-    () =>
-      reduceConfigTransform(initialForm, (config) => {
-        const error = config.validation && config.validation(config.value);
-        return {
-          ...config,
-          touched: false,
-          invalid: Boolean(error),
-          error,
-        };
-      }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
+const initialFn = (initialForm: InitialForm<any>) =>
+  reduceConfigTransform(initialForm, (config) => {
+    const error = config.validation && config.validation(config.value);
+    return {
+      ...config,
+      touched: false,
+      invalid: Boolean(error),
+      error,
+    };
+  });
 
-  const [form, setForm] = useState(() => initialFn());
+export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
+  const [form, setForm] = useState(() => initialFn(initialForm));
 
   const values = useMemo(
     () => reduceConfigTransform(form, ({ value }) => value),
@@ -125,8 +121,11 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
     [form]
   );
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const resetHandler = useCallback(() => setForm(() => initialFn()), []);
+  const resetHandler = useCallback(
+    () => setForm(() => initialFn(initialForm)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
 
   return {
     values,

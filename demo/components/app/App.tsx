@@ -5,6 +5,8 @@ import { useForm, InitialForm } from "../../../src";
 import Input from "../UI/input";
 import BlackButton from "../UI/button/blackButton";
 import Progress from "../UI/progress";
+import cn from "classnames";
+import styles from "./App.module.scss";
 
 const INITIAL_FORM: InitialForm<"text" | "email" | "login" | "password"> = {
   text: {
@@ -59,7 +61,9 @@ const INITIAL_FORM: InitialForm<"text" | "email" | "login" | "password"> = {
 const App = () => {
   const [loading, setLoading] = useState(false);
 
-  const { values, handlers, isInvalidForm } = useForm(INITIAL_FORM);
+  const { values, handlers, isInvalidForm, resetHandler } = useForm(
+    INITIAL_FORM
+  );
 
   const submitHandler = useCallback(
     (e) => {
@@ -81,6 +85,7 @@ const App = () => {
         margin: 0,
       }}
       onSubmit={submitHandler}
+      onReset={resetHandler}
     >
       <div className="card-content">
         {Object.entries(handlers).map(([key, config]) => (
@@ -97,9 +102,17 @@ const App = () => {
         ))}
       </div>
 
-      <div className="card-action">
-        <BlackButton type="submit" disabled={isInvalidForm || loading}>
-          Войти
+      <div className={cn("card-action", styles["card-action"])}>
+        <BlackButton
+          type="submit"
+          disabled={isInvalidForm || loading}
+          classNameContainer={styles["submit-button"]}
+        >
+          Отправить
+        </BlackButton>
+
+        <BlackButton type="reset" disabled={isInvalidForm || loading}>
+          Сбросить
         </BlackButton>
       </div>
 
