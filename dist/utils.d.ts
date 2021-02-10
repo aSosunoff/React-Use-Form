@@ -1,9 +1,28 @@
-declare type Merge<A extends Record<string, any>, B extends Record<string, any>> = {
-    [K in keyof A]: K extends keyof B ? B[K] : A[K];
-} & B;
+import { InitialForm, ReduceConfigTransformType } from "./types";
 export declare const isPrimitive: <T>(value: T) => boolean;
-declare type ReduceConfigTransformType = <TObject extends Record<string, any>, Key extends keyof TObject, Result>(obj: TObject, callback: (config: TObject[Key], key: Key, obj?: TObject) => Result) => {
-    [k in Key]: Result extends Record<string, any> ? Merge<Partial<TObject[k]>, Result> : Result;
-};
 export declare const reduceConfigTransform: ReduceConfigTransformType;
-export {};
+export declare const initialFn: <T extends InitialForm<any>>(initialForm: T) => { [k in keyof T]: T[keyof T] & {
+    touched: boolean;
+    invalid: boolean;
+    error: {
+        errorMessage: string;
+    } | undefined;
+} extends Record<string, any> ? { [K in keyof Partial<T[k]>]: K extends "touched" | "invalid" | "error" | keyof T[keyof T] ? (T[keyof T] & {
+    touched: boolean;
+    invalid: boolean;
+    error: {
+        errorMessage: string;
+    } | undefined;
+})[K] : Partial<T[k]>[K]; } & T[keyof T] & {
+    touched: boolean;
+    invalid: boolean;
+    error: {
+        errorMessage: string;
+    } | undefined;
+} : T[keyof T] & {
+    touched: boolean;
+    invalid: boolean;
+    error: {
+        errorMessage: string;
+    } | undefined;
+}; };
