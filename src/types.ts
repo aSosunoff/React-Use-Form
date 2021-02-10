@@ -29,15 +29,20 @@ export type InitialForm<T extends keyof any> = {
   };
 };
 
-export type KeyList<T extends InitialForm<any>> = T extends InitialForm<infer R>
+type Keys<T extends InitialForm<any>> = T extends InitialForm<infer R>
   ? R
   : never;
 
-export type SetValueKey<T extends InitialForm<any>> = {
-  [key in KeyList<T>]?:
+type RecordKeys<T extends InitialForm<any>> = {
+  [key in Keys<T>]?:
     | (string | boolean | number)
     | {
         value: any;
-        touched: boolean;
+        touched?: boolean;
       };
 };
+
+export interface ISetValue<T extends InitialForm<any>> {
+  (key: Keys<T>, value: any, touched?: boolean): void;
+  (key: RecordKeys<T>): void;
+}

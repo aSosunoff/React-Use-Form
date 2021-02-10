@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import { InitialForm, KeyList, SetValueKey } from "./types";
+import { InitialForm, ISetValue } from "./types";
 import { initialFn, isPrimitive, reduceConfigTransform } from "./utils";
 
 export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
@@ -10,55 +10,52 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
     [form]
   );
 
-  const setValue = useCallback(
-    (key: KeyList<T> | SetValueKey<T>, value: any, touched: boolean) => {
-      if (typeof key === "object") {
-        setForm((prev) =>
-          reduceConfigTransform(prev, (config, field) => {
-            if (!(field in key)) {
-              return config;
-            }
+  const setValue = useCallback((key, value, touched) => {
+    if (typeof key === "object") {
+      setForm((prev) =>
+        reduceConfigTransform(prev, (config, field) => {
+          if (!(field in key)) {
+            return config;
+          }
 
-            let _value;
-            let _touched;
+          let _value;
+          let _touched;
 
-            if (isPrimitive((key as any)[field])) {
-              _value = (key as any)[field];
-            } else {
-              _value = (key as any)[field].value;
-              _touched = (key as any)[field].touched;
-            }
+          if (isPrimitive(key[field])) {
+            _value = key[field];
+          } else {
+            _value = key[field].value;
+            _touched = key[field].touched;
+          }
 
-            const error = config.validation && config.validation(_value);
+          const error = config.validation && config.validation(_value);
 
-            return {
-              ...config,
-              error,
-              invalid: Boolean(error),
-              touched: _touched ?? config.touched,
-              value: _value ?? config.value,
-            };
-          })
-        );
-      } else {
-        setForm((prev) => {
-          const config = prev[key];
-          const error = config.validation && config.validation(value);
           return {
-            ...prev,
-            [key]: {
-              ...config,
-              error: error,
-              invalid: Boolean(error),
-              touched: touched ?? config.touched,
-              value,
-            },
+            ...config,
+            error,
+            invalid: Boolean(error),
+            touched: _touched ?? config.touched,
+            value: _value ?? config.value,
           };
-        });
-      }
-    },
-    []
-  );
+        })
+      );
+    } else {
+      setForm((prev) => {
+        const config = prev[key];
+        const error = config.validation && config.validation(value);
+        return {
+          ...prev,
+          [key]: {
+            ...config,
+            error: error,
+            invalid: Boolean(error),
+            touched: touched ?? config.touched,
+            value,
+          },
+        };
+      });
+    }
+  }, []);
 
   const onChange = useCallback(
     (key: any) => <T extends HTMLTextAreaElement | HTMLInputElement>(
@@ -94,7 +91,7 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
     values,
     handlers,
     resetHandler,
-    setValue,
+    setValue: setValue as ISetValue<T>,
     isInvalidForm,
   };
 };
