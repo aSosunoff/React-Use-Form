@@ -1,4 +1,4 @@
-import { ReduceConfigTransformType } from "./types";
+import { InitialForm, ReduceConfigTransformType } from "./types";
 
 export const isPrimitive = <T>(value: T) => value !== Object(value);
 
@@ -13,3 +13,14 @@ export const reduceConfigTransform: ReduceConfigTransformType = (
     }),
     {} as any
   );
+
+export const initialFn = <T extends InitialForm<any>>(initialForm: T) =>
+  reduceConfigTransform(initialForm, (config) => {
+    const error = config.validation && config.validation(config.value);
+    return {
+      ...config,
+      touched: false,
+      invalid: Boolean(error),
+      error,
+    };
+  });

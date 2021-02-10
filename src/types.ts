@@ -15,3 +15,29 @@ export type ReduceConfigTransformType = <
     ? Merge<Partial<TObject[k]>, Result>
     : Result;
 };
+
+export type InitialForm<T extends keyof any> = {
+  [key in T]: {
+    value: any;
+    validation?: (
+      value: any
+    ) =>
+      | undefined
+      | {
+          errorMessage: string;
+        };
+  };
+};
+
+export type KeyList<T extends InitialForm<any>> = T extends InitialForm<infer R>
+  ? R
+  : never;
+
+export type SetValueKey<T extends InitialForm<any>> = {
+  [key in KeyList<T>]?:
+    | (string | boolean | number)
+    | {
+        value: any;
+        touched: boolean;
+      };
+};
