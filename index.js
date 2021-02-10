@@ -769,6 +769,28 @@ react_dom_1["default"].render(jsx_runtime_1.jsx(emptyLayout_1["default"], {
 /***/ }),
 
 /***/ 819:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.useForm = void 0;
+
+var use_form_1 = __webpack_require__(501);
+
+Object.defineProperty(exports, "useForm", ({
+  enumerable: true,
+  get: function get() {
+    return use_form_1.useForm;
+  }
+}));
+
+/***/ }),
+
+/***/ 501:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -801,20 +823,9 @@ var react_1 = __webpack_require__(378);
 
 var utils_1 = __webpack_require__(437);
 
-var initialFn = function initialFn(initialForm) {
-  return utils_1.reduceConfigTransform(initialForm, function (config) {
-    var error = config.validation && config.validation(config.value);
-    return __assign(__assign({}, config), {
-      touched: false,
-      invalid: Boolean(error),
-      error: error
-    });
-  });
-};
-
 var useForm = function useForm(initialForm) {
   var _a = react_1.useState(function () {
-    return initialFn(initialForm);
+    return utils_1.initialFn(initialForm);
   }),
       form = _a[0],
       setForm = _a[1];
@@ -888,7 +899,7 @@ var useForm = function useForm(initialForm) {
   }, [form]);
   var resetHandler = react_1.useCallback(function () {
     return setForm(function () {
-      return initialFn(initialForm);
+      return utils_1.initialFn(initialForm);
     });
   }, // eslint-disable-next-line react-hooks/exhaustive-deps
   []);
@@ -930,7 +941,7 @@ var __assign = this && this.__assign || function () {
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.reduceConfigTransform = exports.isPrimitive = void 0;
+exports.initialFn = exports.reduceConfigTransform = exports.isPrimitive = void 0;
 
 var isPrimitive = function isPrimitive(value) {
   return value !== Object(value);
@@ -949,6 +960,19 @@ var reduceConfigTransform = function reduceConfigTransform(obj, callback) {
 };
 
 exports.reduceConfigTransform = reduceConfigTransform;
+
+var initialFn = function initialFn(initialForm) {
+  return exports.reduceConfigTransform(initialForm, function (config) {
+    var error = config.validation && config.validation(config.value);
+    return __assign(__assign({}, config), {
+      touched: false,
+      invalid: Boolean(error),
+      error: error
+    });
+  });
+};
+
+exports.initialFn = initialFn;
 
 /***/ }),
 
