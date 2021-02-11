@@ -937,8 +937,7 @@ var useForm = function useForm(initialForm) {
     return setForm(function () {
       return utils_1.initialFn(initialForm);
     });
-  }, // eslint-disable-next-line react-hooks/exhaustive-deps
-  []);
+  }, [initialForm]);
   return {
     values: values,
     handlers: handlers,
