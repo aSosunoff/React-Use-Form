@@ -790,6 +790,35 @@ Object.defineProperty(exports, "useForm", ({
 
 /***/ }),
 
+/***/ 841:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.useComponentDidUpdate = void 0;
+
+var react_1 = __webpack_require__(378);
+
+var useComponentDidUpdate = function useComponentDidUpdate(effect, dependencies) {
+  var hasMounted = react_1.useRef(true);
+  react_1.useEffect(function () {
+    if (hasMounted.current) {
+      hasMounted.current = false;
+      return;
+    }
+
+    return effect(); // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, dependencies);
+};
+
+exports.useComponentDidUpdate = useComponentDidUpdate;
+
+/***/ }),
+
 /***/ 501:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
@@ -821,6 +850,8 @@ exports.useForm = void 0;
 
 var react_1 = __webpack_require__(378);
 
+var use_component_did_update_1 = __webpack_require__(841);
+
 var utils_1 = __webpack_require__(437);
 
 var useForm = function useForm(initialForm) {
@@ -830,6 +861,11 @@ var useForm = function useForm(initialForm) {
       form = _a[0],
       setForm = _a[1];
 
+  use_component_did_update_1.useComponentDidUpdate(function () {
+    setForm(function () {
+      return utils_1.initialFn(initialForm);
+    });
+  }, [initialForm]);
   var values = react_1.useMemo(function () {
     return utils_1.reduceConfigTransform(form, function (_a) {
       var value = _a.value;
