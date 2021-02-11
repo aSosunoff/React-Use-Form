@@ -14,7 +14,7 @@ export declare type InitialForm<T extends keyof any> = {
 };
 declare type Keys<T extends InitialForm<any>> = T extends InitialForm<infer R> ? R : never;
 declare type RecordKeys<T extends InitialForm<any>> = {
-    [key in Keys<T>]?: (string | boolean | number) | {
+    [key in Keys<T>]?: (string | boolean | number | any[]) | {
         value: any;
         touched?: boolean;
     };

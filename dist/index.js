@@ -80,7 +80,7 @@ var useForm = function useForm(initialForm) {
 
           var _touched;
 
-          if (utils_1.isPrimitive(key[field])) {
+          if (Array.isArray(key[field]) || utils_1.isPrimitive(key[field])) {
             _value = key[field];
           } else {
             _value = key[field].value;
