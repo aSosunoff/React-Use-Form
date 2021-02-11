@@ -1,9 +1,14 @@
 import { useCallback, useMemo, useState } from "react";
 import { InitialForm, ISetValue } from "./types";
+import { useComponentDidUpdate } from "./use-component-did-update";
 import { initialFn, isPrimitive, reduceConfigTransform } from "./utils";
 
 export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
   const [form, setForm] = useState(() => initialFn(initialForm));
+
+  useComponentDidUpdate(() => {
+    setForm(() => initialFn(initialForm));
+  }, [initialForm]);
 
   const values = useMemo(
     () => reduceConfigTransform(form, ({ value }) => value),
