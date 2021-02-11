@@ -35,7 +35,7 @@ type Keys<T extends InitialForm<any>> = T extends InitialForm<infer R>
 
 type RecordKeys<T extends InitialForm<any>> = {
   [key in Keys<T>]?:
-    | (string | boolean | number)
+    | (string | boolean | number | any[])
     | {
         value: any;
         touched?: boolean;

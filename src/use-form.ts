@@ -21,7 +21,7 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
           let _value;
           let _touched;
 
-          if (isPrimitive(key[field])) {
+          if (Array.isArray(key[field]) || isPrimitive(key[field])) {
             _value = key[field];
           } else {
             _value = key[field].value;
