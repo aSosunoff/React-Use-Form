@@ -88,8 +88,7 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
 
   const resetHandler = useCallback(
     () => setForm(() => initialFn(initialForm)),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [initialForm]
   );
 
   return {
