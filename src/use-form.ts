@@ -33,11 +33,9 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
             _touched = key[field].touched;
           }
 
-          const error = config.validation && config.validation(_value);
-
           return {
             ...config,
-            error,
+            error: config.validation && config.validation(_value),
             touched: _touched ?? config.touched,
             value: _value ?? config.value,
           };
@@ -46,12 +44,11 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
     } else {
       setForm((prev) => {
         const config = prev[key];
-        const error = config.validation && config.validation(value);
         return {
           ...prev,
           [key]: {
             ...config,
-            error,
+            error: config.validation && config.validation(value),
             touched: touched ?? config.touched,
             value,
           },
