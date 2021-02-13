@@ -38,7 +38,6 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
           return {
             ...config,
             error,
-            invalid: Boolean(error),
             touched: _touched ?? config.touched,
             value: _value ?? config.value,
           };
@@ -52,8 +51,7 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
           ...prev,
           [key]: {
             ...config,
-            error: error,
-            invalid: Boolean(error),
+            error,
             touched: touched ?? config.touched,
             value,
           },
@@ -82,7 +80,10 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
 
   const isInvalidForm = useMemo(
     () =>
-      Object.values(form).reduce((acc, { invalid }) => acc || invalid, false),
+      Object.values(form).reduce(
+        (acc, { error }) => acc || Boolean(error),
+        false
+      ),
     [form]
   );
 

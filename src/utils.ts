@@ -15,12 +15,8 @@ export const reduceConfigTransform: ReduceConfigTransformType = (
   );
 
 export const initialFn = <T extends InitialForm<any>>(initialForm: T) =>
-  reduceConfigTransform(initialForm, (config) => {
-    const error = config.validation && config.validation(config.value);
-    return {
-      ...config,
-      touched: false,
-      invalid: Boolean(error),
-      error,
-    };
-  });
+  reduceConfigTransform(initialForm, (config) => ({
+    ...config,
+    touched: false,
+    error: config.validation && config.validation(config.value),
+  }));

@@ -87,7 +87,7 @@ const App = () => {
           value={text.value}
           disabled={loading}
           onChange={text.onChange}
-          invalid={text.touched && text.invalid}
+          invalid={text.touched && Boolean(text.error)}
           invalidMessage={text.error?.errorMessage}
           type="text"
           label="text"
@@ -97,7 +97,7 @@ const App = () => {
           value={email.value}
           disabled={loading}
           onChange={email.onChange}
-          invalid={email.touched && email.invalid}
+          invalid={email.touched && Boolean(email.error)}
           invalidMessage={email.error?.errorMessage}
           label="email"
           type="email"
@@ -107,7 +107,7 @@ const App = () => {
           value={login.value}
           disabled={loading}
           onChange={login.onChange}
-          invalid={login.touched && login.invalid}
+          invalid={login.touched && Boolean(login.error)}
           invalidMessage={login.error?.errorMessage}
           label="Логин"
           type="text"
@@ -117,7 +117,7 @@ const App = () => {
           value={password.value}
           disabled={loading}
           onChange={password.onChange}
-          invalid={password.touched && password.invalid}
+          invalid={password.touched && Boolean(password.error)}
           invalidMessage={password.error?.errorMessage}
           label="Пароль"
           type="password"
