@@ -1,19 +1,14 @@
-type Merge<A extends Record<string, any>, B extends Record<string, any>> = {
-  [K in keyof A]: K extends keyof B ? B[K] : A[K];
-} &
-  B;
+type RecordObject = Record<string, any>;
 
 export type ReduceConfigTransformType = <
-  TObject extends Record<string, any>,
+  TObject extends RecordObject,
   Key extends keyof TObject,
   Result
 >(
   obj: TObject,
   callback: (config: TObject[Key], key: Key, obj?: TObject) => Result
 ) => {
-  [k in Key]: Result extends Record<string, any>
-    ? Merge<Partial<TObject[k]>, Result>
-    : Result;
+  [k in Key]: Result;
 };
 
 export type InitialForm<T extends keyof any> = {
