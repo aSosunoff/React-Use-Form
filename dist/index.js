@@ -122,10 +122,8 @@ var useForm = function useForm(initialForm) {
             _touched = key[field].touched;
           }
 
-          var error = config.validation && config.validation(_value);
           return __assign(__assign({}, config), {
-            error: error,
-            invalid: Boolean(error),
+            error: config.validation && config.validation(_value),
             touched: _touched !== null && _touched !== void 0 ? _touched : config.touched,
             value: _value !== null && _value !== void 0 ? _value : config.value
           });
@@ -136,10 +134,8 @@ var useForm = function useForm(initialForm) {
         var _a;
 
         var config = prev[key];
-        var error = config.validation && config.validation(value);
         return __assign(__assign({}, prev), (_a = {}, _a[key] = __assign(__assign({}, config), {
-          error: error,
-          invalid: Boolean(error),
+          error: config.validation && config.validation(value),
           touched: touched !== null && touched !== void 0 ? touched : config.touched,
           value: value
         }), _a));
@@ -160,8 +156,8 @@ var useForm = function useForm(initialForm) {
   }, [onChange, form]);
   var isInvalidForm = react_1.useMemo(function () {
     return Object.values(form).reduce(function (acc, _a) {
-      var invalid = _a.invalid;
-      return acc || invalid;
+      var error = _a.error;
+      return acc || Boolean(error);
     }, false);
   }, [form]);
   var resetHandler = react_1.useCallback(function () {
@@ -228,11 +224,9 @@ exports.reduceConfigTransform = reduceConfigTransform;
 
 var initialFn = function initialFn(initialForm) {
   return exports.reduceConfigTransform(initialForm, function (config) {
-    var error = config.validation && config.validation(config.value);
     return __assign(__assign({}, config), {
       touched: false,
-      invalid: Boolean(error),
-      error: error
+      error: config.validation && config.validation(config.value)
     });
   });
 };
