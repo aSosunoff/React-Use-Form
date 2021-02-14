@@ -573,7 +573,7 @@ var App = function App() {
         value: text.value,
         disabled: loading,
         onChange: text.onChange,
-        invalid: text.touched && text.invalid,
+        invalid: text.touched && Boolean(text.error),
         invalidMessage: (_a = text.error) === null || _a === void 0 ? void 0 : _a.errorMessage,
         type: "text",
         label: "text"
@@ -581,7 +581,7 @@ var App = function App() {
         value: email.value,
         disabled: loading,
         onChange: email.onChange,
-        invalid: email.touched && email.invalid,
+        invalid: email.touched && Boolean(email.error),
         invalidMessage: (_b = email.error) === null || _b === void 0 ? void 0 : _b.errorMessage,
         label: "email",
         type: "email"
@@ -589,7 +589,7 @@ var App = function App() {
         value: login.value,
         disabled: loading,
         onChange: login.onChange,
-        invalid: login.touched && login.invalid,
+        invalid: login.touched && Boolean(login.error),
         invalidMessage: (_c = login.error) === null || _c === void 0 ? void 0 : _c.errorMessage,
         label: "\u041B\u043E\u0433\u0438\u043D",
         type: "text"
@@ -597,7 +597,7 @@ var App = function App() {
         value: password.value,
         disabled: loading,
         onChange: password.onChange,
-        invalid: password.touched && password.invalid,
+        invalid: password.touched && Boolean(password.error),
         invalidMessage: (_d = password.error) === null || _d === void 0 ? void 0 : _d.errorMessage,
         label: "\u041F\u0430\u0440\u043E\u043B\u044C",
         type: "password"
@@ -891,10 +891,8 @@ var useForm = function useForm(initialForm) {
             _touched = key[field].touched;
           }
 
-          var error = config.validation && config.validation(_value);
           return __assign(__assign({}, config), {
-            error: error,
-            invalid: Boolean(error),
+            error: config.validation && config.validation(_value),
             touched: _touched !== null && _touched !== void 0 ? _touched : config.touched,
             value: _value !== null && _value !== void 0 ? _value : config.value
           });
@@ -905,10 +903,8 @@ var useForm = function useForm(initialForm) {
         var _a;
 
         var config = prev[key];
-        var error = config.validation && config.validation(value);
         return __assign(__assign({}, prev), (_a = {}, _a[key] = __assign(__assign({}, config), {
-          error: error,
-          invalid: Boolean(error),
+          error: config.validation && config.validation(value),
           touched: touched !== null && touched !== void 0 ? touched : config.touched,
           value: value
         }), _a));
@@ -929,8 +925,8 @@ var useForm = function useForm(initialForm) {
   }, [onChange, form]);
   var isInvalidForm = react_1.useMemo(function () {
     return Object.values(form).reduce(function (acc, _a) {
-      var invalid = _a.invalid;
-      return acc || invalid;
+      var error = _a.error;
+      return acc || Boolean(error);
     }, false);
   }, [form]);
   var resetHandler = react_1.useCallback(function () {
@@ -998,11 +994,9 @@ exports.reduceConfigTransform = reduceConfigTransform;
 
 var initialFn = function initialFn(initialForm) {
   return exports.reduceConfigTransform(initialForm, function (config) {
-    var error = config.validation && config.validation(config.value);
     return __assign(__assign({}, config), {
       touched: false,
-      invalid: Boolean(error),
-      error: error
+      error: config.validation && config.validation(config.value)
     });
   });
 };
