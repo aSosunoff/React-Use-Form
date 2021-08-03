@@ -1,27 +1,6 @@
-define(["react"], (__WEBPACK_EXTERNAL_MODULE__297__) => /******/ (() => { // webpackBootstrap
+define(["react"], (__WEBPACK_EXTERNAL_MODULE__297__) => { return /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
-
-/***/ 447:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports.useForm = void 0;
-
-var use_form_1 = __webpack_require__(16);
-
-Object.defineProperty(exports, "useForm", ({
-  enumerable: true,
-  get: function get() {
-    return use_form_1.useForm;
-  }
-}));
-
-/***/ }),
 
 /***/ 90:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
@@ -143,8 +122,8 @@ var useForm = function useForm(initialForm) {
     }
   }, []);
   var onChange = react_1.useCallback(function (key) {
-    return function (ev) {
-      setValue(key, ev.target ? ev.target.value : ev, true);
+    return function (value) {
+      setValue(key, value, true);
     };
   }, [setValue]);
   var handlers = react_1.useMemo(function () {
@@ -250,8 +229,9 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__297__;
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
-/******/ 		if(__webpack_module_cache__[moduleId]) {
-/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = __webpack_module_cache__[moduleId] = {
@@ -268,10 +248,29 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__297__;
 /******/ 	}
 /******/ 	
 /************************************************************************/
-/******/ 	// module exports must be returned from runtime so entry inlining is disabled
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(447);
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+(() => {
+var exports = __webpack_exports__;
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.useForm = void 0;
+
+var use_form_1 = __webpack_require__(16);
+
+Object.defineProperty(exports, "useForm", ({
+  enumerable: true,
+  get: function get() {
+    return use_form_1.useForm;
+  }
+}));
+})();
+
+/******/ 	return __webpack_exports__;
 /******/ })()
-);;
+;
+});;
 //# sourceMappingURL=index.js.map

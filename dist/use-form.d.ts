@@ -7,7 +7,7 @@ export declare const useForm: <T extends InitialForm<any>>(initialForm: T) => {
             errorMessage: string;
         } | undefined;
     }; }[keyof T] & {
-        onChange: <T_1 extends HTMLTextAreaElement | HTMLInputElement>(ev: any) => void;
+        onChange: (value: any) => void;
     }; };
     resetHandler: () => void;
     setValue: ISetValue<T>;
