@@ -58,10 +58,10 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
   }, []);
 
   const onChange = useCallback(
-    (key: any) => <T extends HTMLTextAreaElement | HTMLInputElement>(
-      ev: React.ChangeEvent<T> | any
+    (key: any) => (
+      value: any
     ) => {
-      setValue(key, ev.target ? ev.target.value : ev, true);
+      setValue(key, value, true);
     },
     [setValue]
   );
