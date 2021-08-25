@@ -1,12 +1,12 @@
 import { useCallback, useMemo, useState } from "react";
 import { InitialForm } from "./types";
-import { useComponentDidUpdate } from "./use-component-did-update";
+import { useDidUpdate } from "./use-did-update";
 import { initialFn, reduceConfigTransform } from "./utils";
 
 export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
   const [form, setForm] = useState(() => initialFn(initialForm));
 
-  useComponentDidUpdate(() => {
+  useDidUpdate(() => {
     setForm(() => initialFn(initialForm));
   }, [initialForm]);
 

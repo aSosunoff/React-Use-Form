@@ -1,8 +1,8 @@
 import { DependencyList, EffectCallback, useEffect, useRef } from "react";
 
-export const useComponentDidUpdate = (
+export const useDidUpdate = (
   effect: EffectCallback,
-  dependencies?: DependencyList
+  dependencies: DependencyList
 ) => {
   const hasMounted = useRef(true);
 
