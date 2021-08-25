@@ -1,6 +1,7 @@
 import { InitialForm, ReduceConfigTransformType } from "./types";
 
-export const isPrimitive = <T>(value: T) => value !== Object(value);
+export const isPrimitive = (value: unknown): value is true =>
+  value !== Object(value);
 
 export const reduceConfigTransform: ReduceConfigTransformType = (
   obj,

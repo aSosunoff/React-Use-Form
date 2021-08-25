@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
-import { InitialForm, ISetValue } from "./types";
+import { InitialForm } from "./types";
 import { useComponentDidUpdate } from "./use-component-did-update";
-import { initialFn, isPrimitive, reduceConfigTransform } from "./utils";
+import { initialFn, reduceConfigTransform } from "./utils";
 
 export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
   const [form, setForm] = useState(() => initialFn(initialForm));
@@ -15,35 +15,11 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
     [form]
   );
 
-  const setValue = useCallback((key, value, touched) => {
-    if (typeof key === "object") {
-      setForm((prev) =>
-        reduceConfigTransform(prev, (config, field) => {
-          if (!(field in key)) {
-            return config;
-          }
-
-          let _value;
-          let _touched;
-
-          if (Array.isArray(key[field]) || isPrimitive(key[field])) {
-            _value = key[field];
-          } else {
-            _value = key[field].value;
-            _touched = key[field].touched;
-          }
-
-          return {
-            ...config,
-            error: config.validation && config.validation(_value),
-            touched: _touched ?? config.touched,
-            value: _value ?? config.value,
-          };
-        })
-      );
-    } else {
+  const setValue = useCallback(
+    (key: keyof T, value: any, touched?: boolean) => {
       setForm((prev) => {
         const config = prev[key];
+
         return {
           ...prev,
           [key]: {
@@ -54,8 +30,36 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
           },
         };
       });
-    }
-  }, []);
+    },
+    []
+  );
+
+  const setValues = useCallback(
+    (
+      obj: {
+        [key in keyof T]?: {
+          value: any;
+          touched?: boolean;
+        };
+      }
+    ) => {
+      setForm((prev) =>
+        reduceConfigTransform(prev, (config, field) => {
+          if (!(field in obj)) return config;
+
+          const _value = obj[field]?.value;
+
+          return {
+            ...config,
+            error: config.validation && config.validation(_value),
+            touched: obj[field]?.touched ?? config.touched,
+            value: _value ?? config.value,
+          };
+        })
+      );
+    },
+    []
+  );
 
   const handlers = useMemo(
     () =>
@@ -84,7 +88,8 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
     values,
     handlers,
     resetHandler,
-    setValue: setValue as ISetValue<T>,
+    setValues,
+    setValue,
     isInvalidForm,
   };
 };

@@ -1,11 +1,12 @@
 import React, { useCallback, useState } from "react";
+import cn from "classnames";
 import is from "is_js";
+
 import { useForm, InitialFormType } from "../../../src";
 /* import { useForm, InitialForm } from "../../../dist"; */
 import Input from "../UI/input";
 import BlackButton from "../UI/button/blackButton";
 import Progress from "../UI/progress";
-import cn from "classnames";
 import styles from "./App.module.scss";
 
 const INITIAL_FORM: InitialFormType<"text" | "email" | "login" | "password"> = {
