@@ -62,7 +62,7 @@
     "webpack-dev-server": "^3.11.2"
   },
   "scripts": {
-    "serve": "cross-env webpack serve --mode development --open",
+    "serve": "cross-env DEMO_PATH=demo webpack serve --mode development --open",
     "dist": "cross-env CONFIG=dist webpack --mode production",
     "build": "cross-env CONFIG=production webpack --mode production",
     "predeploy": "cross-env GP_DEPLOY=true CONFIG=production webpack --mode production",
