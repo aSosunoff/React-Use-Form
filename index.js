@@ -474,6 +474,8 @@ var jsx_runtime_1 = __webpack_require__(246);
 
 var react_1 = __webpack_require__(378);
 
+var classnames_1 = __importDefault(__webpack_require__(42));
+
 var is_js_1 = __importDefault(__webpack_require__(808));
 
 var src_1 = __webpack_require__(819);
@@ -485,8 +487,6 @@ var input_1 = __importDefault(__webpack_require__(687));
 var blackButton_1 = __importDefault(__webpack_require__(814));
 
 var progress_1 = __importDefault(__webpack_require__(80));
-
-var classnames_1 = __importDefault(__webpack_require__(42));
 
 var App_module_scss_1 = __importDefault(__webpack_require__(428));
 
@@ -790,7 +790,7 @@ Object.defineProperty(exports, "useForm", ({
 
 /***/ }),
 
-/***/ 841:
+/***/ 259:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -799,11 +799,11 @@ Object.defineProperty(exports, "useForm", ({
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.useComponentDidUpdate = void 0;
+exports.useDidUpdate = void 0;
 
 var react_1 = __webpack_require__(378);
 
-var useComponentDidUpdate = function useComponentDidUpdate(effect, dependencies) {
+var useDidUpdate = function useDidUpdate(effect, dependencies) {
   var hasMounted = react_1.useRef(true);
   react_1.useEffect(function () {
     if (hasMounted.current) {
@@ -815,7 +815,7 @@ var useComponentDidUpdate = function useComponentDidUpdate(effect, dependencies)
   }, dependencies);
 };
 
-exports.useComponentDidUpdate = useComponentDidUpdate;
+exports.useDidUpdate = useDidUpdate;
 
 /***/ }),
 
@@ -824,8 +824,6 @@ exports.useComponentDidUpdate = useComponentDidUpdate;
 
 "use strict";
 
-
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 var __assign = this && this.__assign || function () {
   __assign = Object.assign || function (t) {
@@ -850,7 +848,7 @@ exports.useForm = void 0;
 
 var react_1 = __webpack_require__(378);
 
-var use_component_did_update_1 = __webpack_require__(841);
+var use_did_update_1 = __webpack_require__(259);
 
 var utils_1 = __webpack_require__(437);
 
@@ -861,7 +859,7 @@ var useForm = function useForm(initialForm) {
       form = _a[0],
       setForm = _a[1];
 
-  use_component_did_update_1.useComponentDidUpdate(function () {
+  use_did_update_1.useDidUpdate(function () {
     setForm(function () {
       return utils_1.initialFn(initialForm);
     });
@@ -873,56 +871,43 @@ var useForm = function useForm(initialForm) {
     });
   }, [form]);
   var setValue = react_1.useCallback(function (key, value, touched) {
-    if (_typeof(key) === "object") {
-      setForm(function (prev) {
-        return utils_1.reduceConfigTransform(prev, function (config, field) {
-          if (!(field in key)) {
-            return config;
-          }
+    setForm(function (prev) {
+      var _a;
 
-          var _value;
+      var config = prev[key];
+      return __assign(__assign({}, prev), (_a = {}, _a[key] = __assign(__assign({}, config), {
+        error: config.validation && config.validation(value),
+        touched: touched !== null && touched !== void 0 ? touched : config.touched,
+        value: value
+      }), _a));
+    });
+  }, []);
+  var setValues = react_1.useCallback(function (obj) {
+    setForm(function (prev) {
+      return utils_1.reduceConfigTransform(prev, function (config, field) {
+        var _a, _b, _c;
 
-          var _touched;
+        if (!(field in obj)) return config;
 
-          if (Array.isArray(key[field]) || utils_1.isPrimitive(key[field])) {
-            _value = key[field];
-          } else {
-            _value = key[field].value;
-            _touched = key[field].touched;
-          }
+        var _value = (_a = obj[field]) === null || _a === void 0 ? void 0 : _a.value;
 
-          return __assign(__assign({}, config), {
-            error: config.validation && config.validation(_value),
-            touched: _touched !== null && _touched !== void 0 ? _touched : config.touched,
-            value: _value !== null && _value !== void 0 ? _value : config.value
-          });
+        return __assign(__assign({}, config), {
+          error: config.validation && config.validation(_value),
+          touched: (_c = (_b = obj[field]) === null || _b === void 0 ? void 0 : _b.touched) !== null && _c !== void 0 ? _c : config.touched,
+          value: _value !== null && _value !== void 0 ? _value : config.value
         });
       });
-    } else {
-      setForm(function (prev) {
-        var _a;
-
-        var config = prev[key];
-        return __assign(__assign({}, prev), (_a = {}, _a[key] = __assign(__assign({}, config), {
-          error: config.validation && config.validation(value),
-          touched: touched !== null && touched !== void 0 ? touched : config.touched,
-          value: value
-        }), _a));
-      });
-    }
+    });
   }, []);
-  var onChange = react_1.useCallback(function (key) {
-    return function (value) {
-      setValue(key, value, true);
-    };
-  }, [setValue]);
   var handlers = react_1.useMemo(function () {
     return utils_1.reduceConfigTransform(form, function (config, key) {
       return __assign(__assign({}, config), {
-        onChange: onChange(key)
+        onChange: function onChange(value) {
+          return setValue(key, value, true);
+        }
       });
     });
-  }, [onChange, form]);
+  }, [setValue, form]);
   var isInvalidForm = react_1.useMemo(function () {
     return Object.values(form).reduce(function (acc, _a) {
       var error = _a.error;
@@ -938,6 +923,7 @@ var useForm = function useForm(initialForm) {
     values: values,
     handlers: handlers,
     resetHandler: resetHandler,
+    setValues: setValues,
     setValue: setValue,
     isInvalidForm: isInvalidForm
   };
