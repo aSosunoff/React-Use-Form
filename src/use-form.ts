@@ -57,22 +57,13 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
     }
   }, []);
 
-  const onChange = useCallback(
-    (key: any) => (
-      value: any
-    ) => {
-      setValue(key, value, true);
-    },
-    [setValue]
-  );
-
   const handlers = useMemo(
     () =>
       reduceConfigTransform(form, (config, key) => ({
         ...config,
-        onChange: onChange(key),
+        onChange: (value: any) => setValue(key, value, true),
       })),
-    [onChange, form]
+    [setValue, form]
   );
 
   const isInvalidForm = useMemo(
