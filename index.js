@@ -901,11 +901,14 @@ var useForm = function useForm(initialForm) {
   }, []);
   var handlers = react_1.useMemo(function () {
     return utils_1.reduceConfigTransform(form, function (config, key) {
-      return __assign(__assign({}, config), {
+      return {
+        value: config.value,
+        error: config.error,
+        touched: config.touched,
         onChange: function onChange(value) {
           return setValue(key, value, true);
         }
-      });
+      };
     });
   }, [setValue, form]);
   var isInvalidForm = react_1.useMemo(function () {
