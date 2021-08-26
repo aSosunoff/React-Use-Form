@@ -48,8 +48,9 @@ const App = () => {
     values,
     handlers: { email },
     isInvalidForm,
-    reset,
+    resetHandler,
     setValue,
+    setValues,
   } = useForm(INITIAL_FORM);
 
   return (

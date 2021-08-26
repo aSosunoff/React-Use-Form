@@ -64,7 +64,9 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
   const handlers = useMemo(
     () =>
       reduceConfigTransform(form, (config, key) => ({
-        ...config,
+        value: config.value,
+        error: config.error,
+        touched: config.touched,
         onChange: (value: any) => setValue(key, value, true),
       })),
     [setValue, form]
