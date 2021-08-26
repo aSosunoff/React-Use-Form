@@ -1,12 +1,12 @@
 import { InitialForm } from "./types";
 export declare const useForm: <T extends InitialForm<any>>(initialForm: T) => {
     values: { [k in keyof T]: any; };
-    handlers: { [k_1 in keyof T]: { [k_2 in keyof T]: T[keyof T] & {
-        touched: boolean;
+    handlers: { [k_1 in keyof T]: {
+        value: any;
         error: {
             errorMessage: string;
         } | undefined;
-    }; }[keyof T] & {
+        touched: boolean;
         onChange: (value: any) => void;
     }; };
     resetHandler: () => void;
