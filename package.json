@@ -63,6 +63,7 @@
   },
   "scripts": {
     "demo": "cross-env DEMO_PATH=demo webpack serve --mode development --open",
+    "demo2": "cross-env DEMO_PATH=demo2 webpack serve --mode development --open",
     "dist": "cross-env CONFIG=dist webpack --mode production",
     "build": "cross-env CONFIG=production webpack --mode production",
     "predeploy": "cross-env GP_DEPLOY=true CONFIG=production webpack --mode production",
