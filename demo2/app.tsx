@@ -15,9 +15,13 @@ export const App = () => {
     console.log(form);
   }, [form]);
 
-  const { handlers } = form;
+  const { handlers, values } = form;
 
-  /* const { sdd } = handlers; */
+  const { newField } = values;
+
+  useEffect(() => {
+    console.log(newField);
+  }, [newField]);
 
   return (
     <div className={styles.container}>

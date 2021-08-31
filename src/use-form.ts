@@ -4,13 +4,13 @@ import { useDidUpdate } from "./use-did-update";
 import { initialFn, reduceConfigTransform } from "./utils";
 
 export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
-  const [form, setForm] = useState(() => initialFn(initialForm));
+  const [form, setForm] = useState(() => initialFn<keyof T>(initialForm));
 
   useDidUpdate(() => {
-    setForm(() => initialFn(initialForm));
+    setForm(() => initialFn<keyof T>(initialForm));
   }, [initialForm]);
 
-  const values = useMemo(
+  const values = useMemo<{ [k in keyof T]: any } & Record<string, any>>(
     () => reduceConfigTransform(form, ({ value }) => value),
     [form]
   );
@@ -117,7 +117,7 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
   );
 
   const resetHandler = useCallback(
-    () => setForm(() => initialFn(initialForm)),
+    () => setForm(() => initialFn<keyof T>(initialForm)),
     [initialForm]
   );
 
