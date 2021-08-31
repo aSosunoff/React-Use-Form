@@ -15,13 +15,7 @@ export const App = () => {
     console.log(form);
   }, [form]);
 
-  const { handlers, values } = form;
-
-  const { newField } = values;
-
-  useEffect(() => {
-    console.log(newField);
-  }, [newField]);
+  const { handlers } = form;
 
   return (
     <div className={styles.container}>
@@ -30,13 +24,19 @@ export const App = () => {
           form.addFields({
             newField: {
               value: "",
+              validation: (value: string) => {
+                if (value.trim().length === 0) {
+                  return {
+                    errorMessage: "ошибка. поле обязательно для заполнения",
+                  };
+                }
+              },
             },
           });
         }}
       >
         Создать новое поле
       </button>
-
       <button
         onClick={() => {
           form.removeField("newField");
@@ -46,14 +46,21 @@ export const App = () => {
       </button>
 
       {Object.entries(handlers).map(([name, config], index) => (
-        <input
-          key={index}
-          name={name}
-          value={config.value}
-          onChange={({ target }) => {
-            config.onChange(target.value);
-          }}
-        />
+        <div key={index} className={styles.field}>
+          <div>{name}</div>
+
+          <input
+            name={name}
+            value={config.value}
+            onChange={({ target }) => {
+              config.onChange(target.value);
+            }}
+          />
+
+          {config.touched && config.error && (
+            <div>{config.error.errorMessage}</div>
+          )}
+        </div>
       ))}
     </div>
   );

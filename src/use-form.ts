@@ -3,6 +3,25 @@ import { InitialForm } from "./types";
 import { useDidUpdate } from "./use-did-update";
 import { initialFn, reduceConfigTransform } from "./utils";
 
+type Values<T extends InitialForm<any>> = { [k in keyof T]: any } &
+  Record<string, any>;
+
+type HandlersConfig = {
+  value: any;
+  error:
+    | {
+        errorMessage: string;
+      }
+    | undefined;
+  touched: boolean;
+  onChange: (value: any) => void;
+};
+
+type Handlers<T extends InitialForm<any>> = {
+  [k in keyof T]: HandlersConfig;
+} &
+  Record<string, HandlersConfig>;
+
 export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
   const [form, setForm] = useState(() => initialFn<keyof T>(initialForm));
 
@@ -10,7 +29,7 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
     setForm(() => initialFn<keyof T>(initialForm));
   }, [initialForm]);
 
-  const values = useMemo<{ [k in keyof T]: any } & Record<string, any>>(
+  const values = useMemo<Values<T>>(
     () => reduceConfigTransform(form, ({ value }) => value),
     [form]
   );
@@ -96,7 +115,7 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
     []
   );
 
-  const handlers = useMemo(
+  const handlers = useMemo<Handlers<T>>(
     () =>
       reduceConfigTransform(form, (config, key) => ({
         value: config.value,
