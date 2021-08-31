@@ -15,10 +15,45 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
     [form]
   );
 
+  const addFields = useCallback(
+    (obj: {
+      [field: string]: {
+        value: any;
+        touched?: boolean;
+        validation?: (value: any) =>
+          | undefined
+          | {
+              errorMessage: string;
+            };
+      };
+    }) => {
+      setForm((prev) => ({
+        ...prev,
+        ...reduceConfigTransform(obj, (config) => ({
+          ...config,
+          error: config?.validation && config.validation(config.value),
+          touched: config?.touched ?? false,
+          value: config.value,
+        })),
+      }));
+    },
+    []
+  );
+
+  const removeField = useCallback((fieldName: string) => {
+    setForm((prev) => ({
+      ...(Object.fromEntries(
+        Object.entries(prev).filter(([field]) => field !== fieldName)
+      ) as typeof prev),
+    }));
+  }, []);
+
   const setValue = useCallback(
     (key: keyof T, value: any, touched?: boolean) => {
       setForm((prev) => {
         const config = prev[key];
+
+        if (!config) return prev;
 
         return {
           ...prev,
@@ -92,6 +127,8 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
     resetHandler,
     setValues,
     setValue,
+    addFields,
+    removeField,
     isInvalidForm,
   };
 };
