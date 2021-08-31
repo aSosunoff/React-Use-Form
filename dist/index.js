@@ -80,11 +80,33 @@ var useForm = function useForm(initialForm) {
       return value;
     });
   }, [form]);
+  var addFields = react_1.useCallback(function (obj) {
+    setForm(function (prev) {
+      return __assign(__assign({}, prev), utils_1.reduceConfigTransform(obj, function (config) {
+        var _a;
+
+        return __assign(__assign({}, config), {
+          error: (config === null || config === void 0 ? void 0 : config.validation) && config.validation(config.value),
+          touched: (_a = config === null || config === void 0 ? void 0 : config.touched) !== null && _a !== void 0 ? _a : false,
+          value: config.value
+        });
+      }));
+    });
+  }, []);
+  var removeField = react_1.useCallback(function (fieldName) {
+    setForm(function (prev) {
+      return __assign({}, Object.fromEntries(Object.entries(prev).filter(function (_a) {
+        var field = _a[0];
+        return field !== fieldName;
+      })));
+    });
+  }, []);
   var setValue = react_1.useCallback(function (key, value, touched) {
     setForm(function (prev) {
       var _a;
 
       var config = prev[key];
+      if (!config) return prev;
       return __assign(__assign({}, prev), (_a = {}, _a[key] = __assign(__assign({}, config), {
         error: config.validation && config.validation(value),
         touched: touched !== null && touched !== void 0 ? touched : config.touched,
@@ -138,6 +160,8 @@ var useForm = function useForm(initialForm) {
     resetHandler: resetHandler,
     setValues: setValues,
     setValue: setValue,
+    addFields: addFields,
+    removeField: removeField,
     isInvalidForm: isInvalidForm
   };
 };
