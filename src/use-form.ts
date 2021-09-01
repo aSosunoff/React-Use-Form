@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { InitialForm } from "./types";
 import { useDidUpdate } from "./use-did-update";
 import { initialFn, reduceConfigTransform } from "./utils";
@@ -25,6 +25,8 @@ type Handlers<T extends InitialForm<any>> = {
 export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
   const [form, setForm] = useState(() => initialFn(initialForm));
 
+  const initialFormOld = useRef(initialForm);
+
   useDidUpdate(() => {
     setForm(() => initialFn(initialForm));
   }, [initialForm]);
@@ -41,27 +43,42 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
             };
       };
     }) => {
-      setForm((prev) => ({
-        ...prev,
-        ...reduceConfigTransform(obj, (config) => ({
+      setForm((prev) => {
+        const newFields = reduceConfigTransform(obj, (config) => ({
           ...config,
           error: config?.validation && config.validation(config.value),
           touched: config?.touched ?? false,
           value: config.value,
-        })),
-      }));
+        }));
+
+        initialFormOld.current = {
+          ...initialFormOld.current,
+          ...newFields,
+        };
+
+        return {
+          ...prev,
+          ...newFields,
+        };
+      });
     },
     []
   );
 
   const removeField = useCallback(<F extends any>(...fieldsName: F[]) => {
-    setForm((prev) => ({
-      ...(Object.fromEntries(
+    setForm((prev) => {
+      initialFormOld.current = Object.fromEntries(
+        Object.entries(initialFormOld.current).filter(
+          ([field]) => !fieldsName.includes(field as F)
+        )
+      ) as T;
+
+      return Object.fromEntries(
         Object.entries(prev).filter(
           ([field]) => !fieldsName.includes(field as F)
         )
-      ) as typeof prev),
-    }));
+      );
+    });
   }, []);
 
   const setValue = useCallback(
@@ -141,8 +158,8 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
 
   //#region Clean
   const reset = useCallback(
-    () => setForm(() => initialFn(initialForm)),
-    [initialForm]
+    () => setForm(() => initialFn(initialFormOld.current)),
+    [initialFormOld]
   );
 
   const clear = useCallback(
