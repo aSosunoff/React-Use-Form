@@ -13,9 +13,12 @@ const init_form: InitialFormType<"name" | "age"> = {
 
 const EMPTY_OBJ = {};
 
-const init_form_for_create: InitialFormType<"nameFieldForCreate"> = {
-  nameFieldForCreate: {
+const init_form_for_create: InitialFormType<"name" | "newField"> = {
+  name: {
     value: "",
+  },
+  newField: {
+    value: false,
   },
 };
 
@@ -27,8 +30,6 @@ export const App = () => {
   }, [form]);
 
   const { handlers } = form;
-
-  /* form.setValues<keyof typeof init_form>({}); */
 
   /*  */
 
@@ -56,20 +57,20 @@ export const App = () => {
     <div className={styles.container}>
       <div className={styles["field-create"]}>
         <input
-          value={formCreate.handlers.nameFieldForCreate.value}
+          value={formCreate.handlers.name.value}
           onKeyUp={(ev) => {
             if (ev.key === "Enter") {
-              createNewField(formCreate.values.nameFieldForCreate);
+              createNewField(formCreate.values.name);
             }
           }}
           onChange={({ target }) => {
-            formCreate.handlers.nameFieldForCreate.onChange(target.value);
+            formCreate.handlers.name.onChange(target.value);
           }}
         />
 
         <button
           onClick={() => {
-            createNewField(formCreate.values.nameFieldForCreate);
+            createNewField(formCreate.values.name);
           }}
         >
           Создать новое поле
@@ -79,6 +80,37 @@ export const App = () => {
       <button onClick={form.reset}>Сбросить</button>
 
       <button onClick={form.clear}>Очистить</button>
+
+      <div className={styles["checkbox-container"]}>
+        <input
+          type="checkbox"
+          value={formCreate.handlers.newField.value}
+          onChange={({ target }) => {
+            formCreate.handlers.newField.onChange(target.checked);
+
+            const nameField = "test1";
+
+            if (target.checked) {
+              form.addFields({
+                [nameField]: {
+                  value: "",
+                  validation: (value: string) => {
+                    if (value.trim().length === 0) {
+                      return {
+                        errorMessage: "ошибка. поле обязательно для заполнения",
+                      };
+                    }
+                  },
+                },
+              });
+            } else {
+              form.removeField(nameField);
+            }
+          }}
+        />
+
+        <div>Добавить поля</div>
+      </div>
 
       {Object.entries(handlers).map(([name, config], index) => (
         <div key={index} className={styles.field}>
