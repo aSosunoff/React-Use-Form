@@ -5,8 +5,12 @@ import { Handlers, InitialForm, Values } from "./types";
 import { initialFn, reduceConfigTransform } from "./utils";
 
 export const useForm = <T extends InitialForm<any>>(initialForm?: T) => {
-  const { initialFormMemo, initialFormMemoHandler, add, remove } =
-    useInitialFormMemo(initialForm);
+  const {
+    initialFormMemo,
+    initialFormMemoHandler,
+    addFieldsToMemoHandler,
+    removeFieldsFromMemoHandler,
+  } = useInitialFormMemo(initialForm);
 
   //#region
   const [form, setForm] = useState(() =>
@@ -49,7 +53,7 @@ export const useForm = <T extends InitialForm<any>>(initialForm?: T) => {
   );
 
   const reset = useCallback(
-    () => setForm(() => initialFn(initialFormMemo)),
+    () => setForm(() => initialFn(initialFormMemo.current)),
     [initialFormMemo]
   );
 
@@ -69,20 +73,20 @@ export const useForm = <T extends InitialForm<any>>(initialForm?: T) => {
 
   const addFields = useCallback(
     (configs: InitialForm<string>) => {
-      add(configs);
+      addFieldsToMemoHandler(configs);
 
       addFieldsToFormHandler(initialFn(configs));
     },
-    [add, addFieldsToFormHandler]
+    [addFieldsToMemoHandler, addFieldsToFormHandler]
   );
 
   const removeField = useCallback(
     <F extends any>(...fieldsName: F[]) => {
-      remove(...fieldsName);
+      removeFieldsFromMemoHandler(...fieldsName);
 
       removeFieldsFromFormHandler(...fieldsName);
     },
-    [remove, removeFieldsFromFormHandler]
+    [removeFieldsFromMemoHandler, removeFieldsFromFormHandler]
   );
 
   const setValue = useCallback(
