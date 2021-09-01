@@ -547,7 +547,7 @@ var App = function App() {
       login = _g.login,
       password = _g.password,
       isInvalidForm = _f.isInvalidForm,
-      resetHandler = _f.resetHandler;
+      reset = _f.reset;
 
   var submitHandler = react_1.useCallback(function (e) {
     e.preventDefault();
@@ -564,7 +564,7 @@ var App = function App() {
       margin: 0
     },
     onSubmit: submitHandler,
-    onReset: resetHandler
+    onReset: reset
   }, {
     children: [jsx_runtime_1.jsxs("div", __assign({
       className: "card-content"
@@ -768,6 +768,67 @@ react_dom_1["default"].render(jsx_runtime_1.jsx(emptyLayout_1["default"], {
 
 /***/ }),
 
+/***/ 497:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __assign = this && this.__assign || function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+
+      for (var p in s) {
+        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+      }
+    }
+
+    return t;
+  };
+
+  return __assign.apply(this, arguments);
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.useInitialFormMemo = void 0;
+
+var react_1 = __webpack_require__(378);
+
+var useInitialFormMemo = function useInitialFormMemo(initialForm) {
+  var initialFormMemo = react_1.useRef(initialForm !== null && initialForm !== void 0 ? initialForm : {});
+  var initialFormMemoHandler = react_1.useCallback(function (initialForm) {
+    initialFormMemo.current = initialForm;
+  }, []);
+  var addFieldsToMemoHandler = react_1.useCallback(function (newFields) {
+    initialFormMemo.current = __assign(__assign({}, newFields), initialFormMemo.current);
+  }, []);
+  var removeFieldsFromMemoHandler = react_1.useCallback(function () {
+    var fieldsName = [];
+
+    for (var _i = 0; _i < arguments.length; _i++) {
+      fieldsName[_i] = arguments[_i];
+    }
+
+    initialFormMemo.current = Object.fromEntries(Object.entries(initialFormMemo.current).filter(function (_a) {
+      var field = _a[0];
+      return !fieldsName.includes(field);
+    }));
+  }, []);
+  return {
+    initialFormMemo: initialFormMemo,
+    initialFormMemoHandler: initialFormMemoHandler,
+    addFieldsToMemoHandler: addFieldsToMemoHandler,
+    removeFieldsFromMemoHandler: removeFieldsFromMemoHandler
+  };
+};
+
+exports.useInitialFormMemo = useInitialFormMemo;
+
+/***/ }),
+
 /***/ 819:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -787,35 +848,6 @@ Object.defineProperty(exports, "useForm", ({
     return use_form_1.useForm;
   }
 }));
-
-/***/ }),
-
-/***/ 259:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports.useDidUpdate = void 0;
-
-var react_1 = __webpack_require__(378);
-
-var useDidUpdate = function useDidUpdate(effect, dependencies) {
-  var hasMounted = react_1.useRef(true);
-  react_1.useEffect(function () {
-    if (hasMounted.current) {
-      hasMounted.current = false;
-      return;
-    }
-
-    return effect(); // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, dependencies);
-};
-
-exports.useDidUpdate = useDidUpdate;
 
 /***/ }),
 
@@ -846,51 +878,88 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports.useForm = void 0;
 
-var react_1 = __webpack_require__(378);
+var use_initial_form_memo_1 = __webpack_require__(497);
 
-var use_did_update_1 = __webpack_require__(259);
+var react_1 = __webpack_require__(378);
+/* import { useDidUpdate } from "./hooks/use-did-update"; */
+
 
 var utils_1 = __webpack_require__(437);
 
 var useForm = function useForm(initialForm) {
-  var _a = react_1.useState(function () {
-    return utils_1.initialFn(initialForm);
+  var _a = use_initial_form_memo_1.useInitialFormMemo(initialForm),
+      initialFormMemo = _a.initialFormMemo,
+      initialFormMemoHandler = _a.initialFormMemoHandler,
+      addFieldsToMemoHandler = _a.addFieldsToMemoHandler,
+      removeFieldsFromMemoHandler = _a.removeFieldsFromMemoHandler; //#region
+
+
+  var _b = react_1.useState(function () {
+    return initialForm ? utils_1.initialFn(initialForm) : utils_1.initialFn({});
   }),
-      form = _a[0],
-      setForm = _a[1];
+      form = _b[0],
+      setForm = _b[1];
+  /* useDidUpdate(() => {
+    setForm(() => (initialForm ? initialFn(initialForm) : initialFn({})));
+  }, [initialForm]); */
 
-  use_did_update_1.useDidUpdate(function () {
-    setForm(function () {
-      return utils_1.initialFn(initialForm);
-    });
-  }, [initialForm]);
-  var values = react_1.useMemo(function () {
-    return utils_1.reduceConfigTransform(form, function (_a) {
-      var value = _a.value;
-      return value;
-    });
-  }, [form]);
-  var addFields = react_1.useCallback(function (obj) {
+
+  var addFieldsToFormHandler = react_1.useCallback(function (newFields) {
     setForm(function (prev) {
-      return __assign(__assign({}, prev), utils_1.reduceConfigTransform(obj, function (config) {
-        var _a;
+      return __assign(__assign({}, newFields), prev);
+    });
+  }, []);
+  var removeFieldsFromFormHandler = react_1.useCallback(function () {
+    var fieldsName = [];
 
-        return __assign(__assign({}, config), {
-          error: (config === null || config === void 0 ? void 0 : config.validation) && config.validation(config.value),
-          touched: (_a = config === null || config === void 0 ? void 0 : config.touched) !== null && _a !== void 0 ? _a : false,
-          value: config.value
-        });
+    for (var _i = 0; _i < arguments.length; _i++) {
+      fieldsName[_i] = arguments[_i];
+    }
+
+    setForm(function (prev) {
+      return Object.fromEntries(Object.entries(prev).filter(function (_a) {
+        var field = _a[0];
+        return !fieldsName.includes(field);
       }));
     });
   }, []);
-  var removeField = react_1.useCallback(function (fieldName) {
-    setForm(function (prev) {
-      return __assign({}, Object.fromEntries(Object.entries(prev).filter(function (_a) {
-        var field = _a[0];
-        return field !== fieldName;
-      })));
+  var initialFormHandler = react_1.useCallback(function (initialForm) {
+    setForm(function () {
+      return utils_1.initialFn(initialForm);
     });
-  }, []);
+    initialFormMemoHandler(initialForm);
+  }, [initialFormMemoHandler]);
+  var reset = react_1.useCallback(function () {
+    return setForm(function () {
+      return utils_1.initialFn(initialFormMemo.current);
+    });
+  }, [initialFormMemo]);
+  var clear = react_1.useCallback(function () {
+    return setForm(function (prev) {
+      return utils_1.reduceConfigTransform(prev, function (config) {
+        return __assign(__assign({}, config), {
+          value: "",
+          touched: true,
+          error: config.validation && config.validation("")
+        });
+      });
+    });
+  }, []); //#endregion
+
+  var addFields = react_1.useCallback(function (configs) {
+    addFieldsToMemoHandler(configs);
+    addFieldsToFormHandler(utils_1.initialFn(configs));
+  }, [addFieldsToMemoHandler, addFieldsToFormHandler]);
+  var removeField = react_1.useCallback(function () {
+    var fieldsName = [];
+
+    for (var _i = 0; _i < arguments.length; _i++) {
+      fieldsName[_i] = arguments[_i];
+    }
+
+    removeFieldsFromMemoHandler.apply(void 0, fieldsName);
+    removeFieldsFromFormHandler.apply(void 0, fieldsName);
+  }, [removeFieldsFromMemoHandler, removeFieldsFromFormHandler]);
   var setValue = react_1.useCallback(function (key, value, touched) {
     setForm(function (prev) {
       var _a;
@@ -904,23 +973,24 @@ var useForm = function useForm(initialForm) {
       }), _a));
     });
   }, []);
-  var setValues = react_1.useCallback(function (obj) {
+  var setValues = react_1.useCallback(function (fields) {
     setForm(function (prev) {
       return utils_1.reduceConfigTransform(prev, function (config, field) {
         var _a, _b, _c;
 
-        if (!(field in obj)) return config;
+        if (!(field in fields)) return config;
 
-        var _value = (_a = obj[field]) === null || _a === void 0 ? void 0 : _a.value;
+        var _value = (_a = fields[field]) === null || _a === void 0 ? void 0 : _a.value;
 
         return __assign(__assign({}, config), {
           error: config.validation && config.validation(_value),
-          touched: (_c = (_b = obj[field]) === null || _b === void 0 ? void 0 : _b.touched) !== null && _c !== void 0 ? _c : config.touched,
+          touched: (_c = (_b = fields[field]) === null || _b === void 0 ? void 0 : _b.touched) !== null && _c !== void 0 ? _c : config.touched,
           value: _value !== null && _value !== void 0 ? _value : config.value
         });
       });
     });
-  }, []);
+  }, []); //#region helper constant
+
   var handlers = react_1.useMemo(function () {
     return utils_1.reduceConfigTransform(form, function (config, key) {
       return {
@@ -939,17 +1009,20 @@ var useForm = function useForm(initialForm) {
       return acc || Boolean(error);
     }, false);
   }, [form]);
-  var resetHandler = react_1.useCallback(function () {
-    return setForm(function () {
-      return utils_1.initialFn(initialForm);
+  var values = react_1.useMemo(function () {
+    return utils_1.reduceConfigTransform(form, function (_a) {
+      var value = _a.value;
+      return value;
     });
-  }, [initialForm]);
+  }, [form]); //#endregion
+
   return {
     values: values,
     handlers: handlers,
-    resetHandler: resetHandler,
+    initialFormHandler: initialFormHandler,
+    reset: reset,
+    clear: clear,
     setValues: setValues,
-    setValue: setValue,
     addFields: addFields,
     removeField: removeField,
     isInvalidForm: isInvalidForm
