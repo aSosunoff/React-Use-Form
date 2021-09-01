@@ -90,7 +90,7 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
 
   const setValues = useCallback(
     (
-      obj: {
+      fields: {
         [key in keyof T]?: {
           value: any;
           touched?: boolean;
@@ -99,14 +99,14 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
     ) => {
       setForm((prev) =>
         reduceConfigTransform(prev, (config, field) => {
-          if (!(field in obj)) return config;
+          if (!(field in fields)) return config;
 
-          const _value = obj[field]?.value;
+          const _value = fields[field]?.value;
 
           return {
             ...config,
             error: config.validation && config.validation(_value),
-            touched: obj[field]?.touched ?? config.touched,
+            touched: fields[field]?.touched ?? config.touched,
             value: _value ?? config.value,
           };
         })
