@@ -135,7 +135,7 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
     [form]
   );
 
-  const resetHandler = useCallback(
+  const reset = useCallback(
     () => setForm(() => initialFn<keyof T>(initialForm)),
     [initialForm]
   );
@@ -143,7 +143,7 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
   return {
     values,
     handlers,
-    resetHandler,
+    reset,
     setValues,
     setValue,
     addFields,

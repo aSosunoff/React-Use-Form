@@ -58,7 +58,7 @@ const App = () => {
     values,
     handlers: { text, email, login, password },
     isInvalidForm,
-    resetHandler,
+    reset,
   } = useForm(INITIAL_FORM);
 
   const submitHandler = useCallback(
@@ -81,7 +81,7 @@ const App = () => {
         margin: 0,
       }}
       onSubmit={submitHandler}
-      onReset={resetHandler}
+      onReset={reset}
     >
       <div className="card-content">
         <Input

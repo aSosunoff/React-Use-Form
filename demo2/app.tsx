@@ -8,8 +8,10 @@ const init_form = {
   },
 };
 
+const EMPTY_OBJ = {};
+
 export const App = () => {
-  const form = useForm(init_form);
+  const form = useForm(EMPTY_OBJ);
 
   useEffect(() => {
     console.log(form);
@@ -37,12 +39,13 @@ export const App = () => {
       >
         Создать новое поле
       </button>
+
       <button
         onClick={() => {
-          form.removeField("newField");
+          form.reset();
         }}
       >
-        Удалить поле
+        Очистить
       </button>
 
       {Object.entries(handlers).map(([name, config], index) => (
@@ -57,8 +60,16 @@ export const App = () => {
             }}
           />
 
+          <button
+            onClick={() => {
+              form.removeField(name);
+            }}
+          >
+            Удалить поле
+          </button>
+
           {config.touched && config.error && (
-            <div>{config.error.errorMessage}</div>
+            <div className={styles.error}>{config.error.errorMessage}</div>
           )}
         </div>
       ))}
