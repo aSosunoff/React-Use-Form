@@ -145,7 +145,6 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
     handlers,
     reset,
     setValues,
-    setValue,
     addFields,
     removeField,
     isInvalidForm,
