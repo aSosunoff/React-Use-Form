@@ -22,10 +22,35 @@ type Handlers<T extends InitialForm<any>> = {
 } &
   Record<string, HandlersConfig>;
 
+const useInitialFormMemo = <T extends InitialForm<any>>(initialForm: T) => {
+  const initialFormMemo = useRef(initialForm);
+
+  const add = useCallback((newFields: ReturnType<typeof initialFn>) => {
+    initialFormMemo.current = {
+      ...newFields,
+      ...initialFormMemo.current,
+    };
+  }, []);
+
+  const remove = useCallback(<F extends any>(...fieldsName: F[]) => {
+    initialFormMemo.current = Object.fromEntries(
+      Object.entries(initialFormMemo.current).filter(
+        ([field]) => !fieldsName.includes(field as F)
+      )
+    ) as T;
+  }, []);
+
+  return {
+    initialFormMemo: initialFormMemo.current,
+    add,
+    remove,
+  };
+};
+
 export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
   const [form, setForm] = useState(() => initialFn(initialForm));
 
-  const initialFormOld = useRef(initialForm);
+  const { initialFormMemo, add, remove } = useInitialFormMemo(initialForm);
 
   useDidUpdate(() => {
     setForm(() => initialFn(initialForm));
@@ -43,43 +68,37 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
             };
       };
     }) => {
-      setForm((prev) => {
-        const newFields = reduceConfigTransform(obj, (config) => ({
-          ...config,
-          error: config?.validation && config.validation(config.value),
-          touched: config?.touched ?? false,
-          value: config.value,
-        }));
+      const newFields = reduceConfigTransform(obj, (config) => ({
+        ...config,
+        error: config?.validation && config.validation(config.value),
+        touched: config?.touched ?? false,
+        value: config.value,
+      }));
 
-        initialFormOld.current = {
-          ...initialFormOld.current,
-          ...newFields,
-        };
+      add(newFields);
 
-        return {
-          ...prev,
-          ...newFields,
-        };
-      });
+      setForm((prev) => ({
+        ...newFields,
+        ...prev,
+      }));
     },
-    []
+    [add]
   );
 
-  const removeField = useCallback(<F extends any>(...fieldsName: F[]) => {
-    setForm((prev) => {
-      initialFormOld.current = Object.fromEntries(
-        Object.entries(initialFormOld.current).filter(
-          ([field]) => !fieldsName.includes(field as F)
-        )
-      ) as T;
+  const removeField = useCallback(
+    <F extends any>(...fieldsName: F[]) => {
+      remove(fieldsName);
 
-      return Object.fromEntries(
-        Object.entries(prev).filter(
-          ([field]) => !fieldsName.includes(field as F)
+      setForm((prev) =>
+        Object.fromEntries(
+          Object.entries(prev).filter(
+            ([field]) => !fieldsName.includes(field as F)
+          )
         )
       );
-    });
-  }, []);
+    },
+    [remove]
+  );
 
   const setValue = useCallback(
     (key: keyof T, value: any, touched?: boolean) => {
@@ -158,8 +177,8 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
 
   //#region Clean
   const reset = useCallback(
-    () => setForm(() => initialFn(initialFormOld.current)),
-    [initialFormOld]
+    () => setForm(() => initialFn(initialFormMemo)),
+    [initialFormMemo]
   );
 
   const clear = useCallback(
