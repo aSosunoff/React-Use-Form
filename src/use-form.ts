@@ -151,6 +151,8 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
         reduceConfigTransform(prev, (config) => ({
           ...config,
           value: "",
+          touched: true,
+          error: config.validation && config.validation(""),
         }))
       ),
     []

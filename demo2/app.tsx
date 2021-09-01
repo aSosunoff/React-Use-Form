@@ -138,7 +138,9 @@ export const App = () => {
         </div>
       ))}
 
-      {form.isInvalidForm ? <div>На форме есть ошибки</div> : null}
+      {form.isInvalidForm ? (
+        <div style={{ color: "var(--error)" }}>На форме есть ошибки</div>
+      ) : null}
     </div>
   );
 };

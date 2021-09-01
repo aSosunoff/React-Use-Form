@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: 15px;
+  --error: red;
 
   & .field-create {
     display: grid;
@@ -32,7 +33,7 @@
 
     & .error {
       grid-column: 1 / 4;
-      color: red;
+      color: var(--error);
     }
   }
 }
