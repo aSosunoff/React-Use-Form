@@ -1,7 +1,7 @@
-export declare type ReduceConfigTransformType = <TObject extends Record<string, any>, Key extends keyof TObject, Result>(obj: TObject, callback: (config: TObject[Key], key: Key, obj?: TObject) => Result) => {
-    [k in Key]: Result;
+export declare type ReduceConfigTransformType = <TObject extends Record<string, any>, Result>(obj: TObject, callback: (config: TObject[keyof TObject], key: keyof TObject, obj?: TObject) => Result) => {
+    [k in keyof TObject]: Result;
 };
-export declare type InitialForm<T extends keyof any> = {
+export declare type InitialForm<T extends string> = {
     [key in T]: {
         value: any;
         validation?: (value: any) => undefined | {
@@ -9,3 +9,17 @@ export declare type InitialForm<T extends keyof any> = {
         };
     };
 };
+export declare type Values<T extends InitialForm<any>> = {
+    [k in keyof T]: any;
+} & Record<string, any>;
+export declare type HandlersConfig = {
+    value: any;
+    error: {
+        errorMessage: string;
+    } | undefined;
+    touched: boolean;
+    onChange: (value: any) => void;
+};
+export declare type Handlers<T extends InitialForm<any>> = {
+    [k in keyof T]: HandlersConfig;
+} & Record<string, HandlersConfig>;

@@ -4,7 +4,7 @@ export declare type CompressType<T extends Record<any, any>, F extends keyof T[a
     [key in keyof T]: T[key][F];
 };
 export declare const reduceConfigTransform: ReduceConfigTransformType;
-export declare const initialFn: <T extends string | number | symbol>(initialForm: InitialForm<T>) => { [k in T]: InitialForm<T>[T] & {
+export declare const initialFn: <T extends string>(initialForm: InitialForm<T>) => { [k in keyof InitialForm<T>]: InitialForm<T>[T] & {
     touched: boolean;
     error: {
         errorMessage: string;
