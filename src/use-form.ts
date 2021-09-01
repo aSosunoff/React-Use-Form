@@ -29,11 +29,6 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
     setForm(() => initialFn<keyof T>(initialForm));
   }, [initialForm]);
 
-  const values = useMemo<Values<T>>(
-    () => reduceConfigTransform(form, ({ value }) => value),
-    [form]
-  );
-
   const addFields = useCallback(
     (obj: {
       [field: string]: {
@@ -59,10 +54,12 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
     []
   );
 
-  const removeField = useCallback(<F extends string>(fieldName: F) => {
+  const removeField = useCallback(<F extends any>(...fieldsName: F[]) => {
     setForm((prev) => ({
       ...(Object.fromEntries(
-        Object.entries(prev).filter(([field]) => field !== fieldName)
+        Object.entries(prev).filter(
+          ([field]) => !fieldsName.includes(field as F)
+        )
       ) as typeof prev),
     }));
   }, []);
@@ -89,9 +86,9 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
   );
 
   const setValues = useCallback(
-    (
+    <F extends string>(
       fields: {
-        [key in keyof T]?: {
+        [key in F]?: {
           value: any;
           touched?: boolean;
         };
@@ -126,6 +123,7 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
     [setValue, form]
   );
 
+  //#region Helper constant
   const isInvalidForm = useMemo(
     () =>
       Object.values(form).reduce(
@@ -135,17 +133,36 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
     [form]
   );
 
+  const values = useMemo<Values<T>>(
+    () => reduceConfigTransform(form, ({ value }) => value),
+    [form]
+  );
+  //#endregion
+
+  //#region Clean
   const reset = useCallback(
     () => setForm(() => initialFn<keyof T>(initialForm)),
     [initialForm]
   );
 
+  const clear = useCallback(
+    () =>
+      setForm((prev) =>
+        reduceConfigTransform(prev, (config) => ({
+          ...config,
+          value: "",
+        }))
+      ),
+    []
+  );
+  //#endregion
+
   return {
     values,
     handlers,
     reset,
+    clear,
     setValues,
-    setValue,
     addFields,
     removeField,
     isInvalidForm,

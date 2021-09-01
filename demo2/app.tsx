@@ -2,9 +2,12 @@ import React, { useEffect } from "react";
 import { useForm, InitialFormType } from "../src";
 import styles from "./app.module.scss";
 
-const init_form: InitialFormType<"name"> = {
+const init_form: InitialFormType<"name" | "age"> = {
   name: {
     value: "",
+  },
+  age: {
+    value: "30",
   },
 };
 
@@ -18,6 +21,8 @@ export const App = () => {
   }, [form]);
 
   const { handlers } = form;
+
+  /* form.setValues<keyof typeof init_form>({}); */
 
   return (
     <div className={styles.container}>
@@ -43,6 +48,14 @@ export const App = () => {
       <button
         onClick={() => {
           form.reset();
+        }}
+      >
+        Сбросить
+      </button>
+
+      <button
+        onClick={() => {
+          form.clear();
         }}
       >
         Очистить
