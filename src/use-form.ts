@@ -23,10 +23,10 @@ type Handlers<T extends InitialForm<any>> = {
   Record<string, HandlersConfig>;
 
 export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
-  const [form, setForm] = useState(() => initialFn<keyof T>(initialForm));
+  const [form, setForm] = useState(() => initialFn(initialForm));
 
   useDidUpdate(() => {
-    setForm(() => initialFn<keyof T>(initialForm));
+    setForm(() => initialFn(initialForm));
   }, [initialForm]);
 
   const addFields = useCallback(
@@ -98,12 +98,12 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
         reduceConfigTransform(prev, (config, field) => {
           if (!(field in fields)) return config;
 
-          const _value = fields[field]?.value;
+          const _value = fields[field as F]?.value;
 
           return {
             ...config,
             error: config.validation && config.validation(_value),
-            touched: fields[field]?.touched ?? config.touched,
+            touched: fields[field as F]?.touched ?? config.touched,
             value: _value ?? config.value,
           };
         })
@@ -119,7 +119,7 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
         error: config.error,
         touched: config.touched,
         onChange: (value: any) => setValue(key, value, true),
-      })),
+      })) as Handlers<T>,
     [setValue, form]
   );
 
@@ -134,14 +134,14 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
   );
 
   const values = useMemo<Values<T>>(
-    () => reduceConfigTransform(form, ({ value }) => value),
+    () => reduceConfigTransform(form, ({ value }) => value) as Values<T>,
     [form]
   );
   //#endregion
 
   //#region Clean
   const reset = useCallback(
-    () => setForm(() => initialFn<keyof T>(initialForm)),
+    () => setForm(() => initialFn(initialForm)),
     [initialForm]
   );
 

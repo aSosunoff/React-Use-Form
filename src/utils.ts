@@ -14,12 +14,12 @@ export const reduceConfigTransform: ReduceConfigTransformType = (
   Object.entries(obj).reduce(
     (acc, [key, config]) => ({
       ...acc,
-      [key]: callback(config, key as any, obj),
+      [key]: callback(config, key, obj),
     }),
     {} as any
   );
 
-export const initialFn = <T extends keyof any>(initialForm: InitialForm<T>) =>
+export const initialFn = <T extends string>(initialForm: InitialForm<T>) =>
   reduceConfigTransform(initialForm, (config) => ({
     ...config,
     touched: false,

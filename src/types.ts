@@ -1,15 +1,18 @@
 export type ReduceConfigTransformType = <
   TObject extends Record<string, any>,
-  Key extends keyof TObject,
   Result
 >(
   obj: TObject,
-  callback: (config: TObject[Key], key: Key, obj?: TObject) => Result
+  callback: (
+    config: TObject[keyof TObject],
+    key: keyof TObject,
+    obj?: TObject
+  ) => Result
 ) => {
-  [k in Key]: Result;
+  [k in keyof TObject]: Result;
 };
 
-export type InitialForm<T extends keyof any> = {
+export type InitialForm<T extends string> = {
   [key in T]: {
     value: any;
     validation?: (value: any) =>
