@@ -1,51 +1,8 @@
-import { useCallback, useMemo, useRef, useState } from "react";
-import { InitialForm } from "./types";
-import { useDidUpdate } from "./use-did-update";
+import { useInitialFormMemo } from "./hooks/use-initial-form-memo";
+import { useCallback, useMemo, useState } from "react";
+import { Handlers, InitialForm, Values } from "./types";
+import { useDidUpdate } from "./hooks/use-did-update";
 import { initialFn, reduceConfigTransform } from "./utils";
-
-type Values<T extends InitialForm<any>> = { [k in keyof T]: any } &
-  Record<string, any>;
-
-type HandlersConfig = {
-  value: any;
-  error:
-    | {
-        errorMessage: string;
-      }
-    | undefined;
-  touched: boolean;
-  onChange: (value: any) => void;
-};
-
-type Handlers<T extends InitialForm<any>> = {
-  [k in keyof T]: HandlersConfig;
-} &
-  Record<string, HandlersConfig>;
-
-const useInitialFormMemo = <T extends InitialForm<any>>(initialForm: T) => {
-  const initialFormMemo = useRef(initialForm);
-
-  const add = useCallback((newFields: ReturnType<typeof initialFn>) => {
-    initialFormMemo.current = {
-      ...newFields,
-      ...initialFormMemo.current,
-    };
-  }, []);
-
-  const remove = useCallback(<F extends any>(...fieldsName: F[]) => {
-    initialFormMemo.current = Object.fromEntries(
-      Object.entries(initialFormMemo.current).filter(
-        ([field]) => !fieldsName.includes(field as F)
-      )
-    ) as T;
-  }, []);
-
-  return {
-    initialFormMemo: initialFormMemo.current,
-    add,
-    remove,
-  };
-};
 
 export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
   const [form, setForm] = useState(() => initialFn(initialForm));
@@ -57,7 +14,7 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
   }, [initialForm]);
 
   const addFields = useCallback(
-    (obj: {
+    (configs: {
       [field: string]: {
         value: any;
         touched?: boolean;
@@ -68,7 +25,7 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
             };
       };
     }) => {
-      const newFields = reduceConfigTransform(obj, (config) => ({
+      const newFields = reduceConfigTransform(configs, (config) => ({
         ...config,
         error: config?.validation && config.validation(config.value),
         touched: config?.touched ?? false,

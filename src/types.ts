@@ -22,3 +22,22 @@ export type InitialForm<T extends string> = {
         };
   };
 };
+
+export type Values<T extends InitialForm<any>> = { [k in keyof T]: any } &
+  Record<string, any>;
+
+export type HandlersConfig = {
+  value: any;
+  error:
+    | {
+        errorMessage: string;
+      }
+    | undefined;
+  touched: boolean;
+  onChange: (value: any) => void;
+};
+
+export type Handlers<T extends InitialForm<any>> = {
+  [k in keyof T]: HandlersConfig;
+} &
+  Record<string, HandlersConfig>;
