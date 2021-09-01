@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
-import { useForm } from "../src";
+import { useForm, InitialFormType } from "../src";
 import styles from "./app.module.scss";
 
-const init_form = {
+const init_form: InitialFormType<"name"> = {
   name: {
     value: "",
   },
@@ -11,7 +11,7 @@ const init_form = {
 const EMPTY_OBJ = {};
 
 export const App = () => {
-  const form = useForm(EMPTY_OBJ);
+  const form = useForm(init_form);
 
   useEffect(() => {
     console.log(form);

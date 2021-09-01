@@ -59,7 +59,7 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
     []
   );
 
-  const removeField = useCallback((fieldName: string) => {
+  const removeField = useCallback(<F extends string>(fieldName: F) => {
     setForm((prev) => ({
       ...(Object.fromEntries(
         Object.entries(prev).filter(([field]) => field !== fieldName)
@@ -145,6 +145,7 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
     handlers,
     reset,
     setValues,
+    setValue,
     addFields,
     removeField,
     isInvalidForm,
