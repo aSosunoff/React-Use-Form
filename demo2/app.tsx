@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useForm, InitialFormType } from "../src";
 import styles from "./app.module.scss";
 
@@ -23,7 +23,22 @@ const init_form_for_create: InitialFormType<"name" | "newField"> = {
 };
 
 export const App = () => {
-  const form = useForm(init_form);
+  const [initialForm, setInitialForm] = useState<InitialFormType<any>>({
+    name: { value: "" },
+  });
+
+  /*  */
+
+  const { initialFormHandler, ...form } = useForm(initialForm);
+
+  useEffect(() => {
+    setTimeout(() => {
+      initialFormHandler({
+        name: { value: "" },
+        name2: { value: "" },
+      });
+    }, 5000);
+  }, [initialFormHandler]);
 
   useEffect(() => {
     console.log(form);
@@ -33,7 +48,7 @@ export const App = () => {
 
   /*  */
 
-  const formCreate = useForm(init_form_for_create);
+  /* const formCreate = useForm(init_form_for_create);
 
   const createNewField = useCallback(
     (fieldName: string) => {
@@ -51,11 +66,11 @@ export const App = () => {
       });
     },
     [form]
-  );
+  ); */
 
   return (
     <div className={styles.container}>
-      <div className={styles["field-create"]}>
+      {/* <div className={styles["field-create"]}>
         <input
           value={formCreate.handlers.name.value}
           onKeyUp={(ev) => {
@@ -75,13 +90,13 @@ export const App = () => {
         >
           Создать новое поле
         </button>
-      </div>
+      </div> */}
 
       <button onClick={form.reset}>Сбросить</button>
 
       <button onClick={form.clear}>Очистить</button>
 
-      <div className={styles["checkbox-container"]}>
+      {/* <div className={styles["checkbox-container"]}>
         <input
           type="checkbox"
           value={formCreate.handlers.newField.value}
@@ -110,14 +125,14 @@ export const App = () => {
         />
 
         <div>Добавить поля</div>
-      </div>
+      </div> */}
 
       {Object.entries(handlers).map(([name, config], index) => (
         <div key={index} className={styles.field}>
           <div>{name}</div>
 
           <input
-            tabIndex={index}
+            tabIndex={index + 1}
             value={config.value}
             onChange={({ target }) => {
               config.onChange(target.value);

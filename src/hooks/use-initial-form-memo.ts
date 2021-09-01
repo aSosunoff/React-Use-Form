@@ -1,29 +1,38 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useState } from "react";
 import { InitialForm } from "../types";
-import { initialFn } from "../utils";
 
-export const useInitialFormMemo = <T extends InitialForm<any>>(
-  initialForm: T
-) => {
-  const initialFormMemo = useRef(initialForm);
+export const useInitialFormMemo = (initialForm?: InitialForm<string>) => {
+  const [initialFormMemo, setInitialFormMemo] = useState(
+    () => initialForm ?? {}
+  );
 
-  const add = useCallback((newFields: ReturnType<typeof initialFn>) => {
-    initialFormMemo.current = {
+  const initialFormMemoHandler = useCallback(
+    (initialForm: InitialForm<string>) => {
+      setInitialFormMemo(() => initialForm);
+    },
+    []
+  );
+
+  const add = useCallback((newFields: InitialForm<string>) => {
+    setInitialFormMemo((prev) => ({
       ...newFields,
-      ...initialFormMemo.current,
-    };
+      ...prev,
+    }));
   }, []);
 
   const remove = useCallback(<F extends any>(...fieldsName: F[]) => {
-    initialFormMemo.current = Object.fromEntries(
-      Object.entries(initialFormMemo.current).filter(
-        ([field]) => !fieldsName.includes(field as F)
+    setInitialFormMemo((prev) =>
+      Object.fromEntries(
+        Object.entries(prev).filter(
+          ([field]) => !fieldsName.includes(field as F)
+        )
       )
-    ) as T;
+    );
   }, []);
 
   return {
-    initialFormMemo: initialFormMemo.current,
+    initialFormMemo,
+    initialFormMemoHandler,
     add,
     remove,
   };

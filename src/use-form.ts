@@ -1,51 +1,34 @@
 import { useInitialFormMemo } from "./hooks/use-initial-form-memo";
 import { useCallback, useMemo, useState } from "react";
 import { Handlers, InitialForm, Values } from "./types";
-import { useDidUpdate } from "./hooks/use-did-update";
+/* import { useDidUpdate } from "./hooks/use-did-update"; */
 import { initialFn, reduceConfigTransform } from "./utils";
 
-export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
-  const [form, setForm] = useState(() => initialFn(initialForm));
+export const useForm = <T extends InitialForm<any>>(initialForm?: T) => {
+  const { initialFormMemo, initialFormMemoHandler, add, remove } =
+    useInitialFormMemo(initialForm);
 
-  const { initialFormMemo, add, remove } = useInitialFormMemo(initialForm);
+  //#region
+  const [form, setForm] = useState(() =>
+    initialForm ? initialFn(initialForm) : initialFn({})
+  );
 
-  useDidUpdate(() => {
-    setForm(() => initialFn(initialForm));
-  }, [initialForm]);
+  /* useDidUpdate(() => {
+    setForm(() => (initialForm ? initialFn(initialForm) : initialFn({})));
+  }, [initialForm]); */
 
-  const addFields = useCallback(
-    (configs: {
-      [field: string]: {
-        value: any;
-        touched?: boolean;
-        validation?: (value: any) =>
-          | undefined
-          | {
-              errorMessage: string;
-            };
-      };
-    }) => {
-      const newFields = reduceConfigTransform(configs, (config) => ({
-        ...config,
-        error: config?.validation && config.validation(config.value),
-        touched: config?.touched ?? false,
-        value: config.value,
-      }));
-
-      add(newFields);
-
+  const addFieldsToFormHandler = useCallback(
+    (newFields: ReturnType<typeof initialFn>) => {
       setForm((prev) => ({
         ...newFields,
         ...prev,
       }));
     },
-    [add]
+    []
   );
 
-  const removeField = useCallback(
+  const removeFieldsFromFormHandler = useCallback(
     <F extends any>(...fieldsName: F[]) => {
-      remove(fieldsName);
-
       setForm((prev) =>
         Object.fromEntries(
           Object.entries(prev).filter(
@@ -54,7 +37,52 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
         )
       );
     },
-    [remove]
+    []
+  );
+
+  const initialFormHandler = useCallback(
+    (initialForm: InitialForm<string>) => {
+      setForm(() => initialFn(initialForm));
+      initialFormMemoHandler(initialForm);
+    },
+    [initialFormMemoHandler]
+  );
+
+  const reset = useCallback(
+    () => setForm(() => initialFn(initialFormMemo)),
+    [initialFormMemo]
+  );
+
+  const clear = useCallback(
+    () =>
+      setForm((prev) =>
+        reduceConfigTransform(prev, (config) => ({
+          ...config,
+          value: "",
+          touched: true,
+          error: config.validation && config.validation(""),
+        }))
+      ),
+    []
+  );
+  //#endregion
+
+  const addFields = useCallback(
+    (configs: InitialForm<string>) => {
+      add(configs);
+
+      addFieldsToFormHandler(initialFn(configs));
+    },
+    [add, addFieldsToFormHandler]
+  );
+
+  const removeField = useCallback(
+    <F extends any>(...fieldsName: F[]) => {
+      remove(...fieldsName);
+
+      removeFieldsFromFormHandler(...fieldsName);
+    },
+    [remove, removeFieldsFromFormHandler]
   );
 
   const setValue = useCallback(
@@ -105,6 +133,7 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
     []
   );
 
+  //#region helper constant
   const handlers = useMemo<Handlers<T>>(
     () =>
       reduceConfigTransform(form, (config, key) => ({
@@ -116,7 +145,6 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
     [setValue, form]
   );
 
-  //#region Helper constant
   const isInvalidForm = useMemo(
     () =>
       Object.values(form).reduce(
@@ -132,29 +160,10 @@ export const useForm = <T extends InitialForm<any>>(initialForm: T) => {
   );
   //#endregion
 
-  //#region Clean
-  const reset = useCallback(
-    () => setForm(() => initialFn(initialFormMemo)),
-    [initialFormMemo]
-  );
-
-  const clear = useCallback(
-    () =>
-      setForm((prev) =>
-        reduceConfigTransform(prev, (config) => ({
-          ...config,
-          value: "",
-          touched: true,
-          error: config.validation && config.validation(""),
-        }))
-      ),
-    []
-  );
-  //#endregion
-
   return {
     values,
     handlers,
+    initialFormHandler,
     reset,
     clear,
     setValues,
