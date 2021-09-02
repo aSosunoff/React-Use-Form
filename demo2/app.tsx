@@ -18,7 +18,8 @@ export const App = () => {
     name: { value: "" },
   }); */
 
-  const form = useForm(init_form);
+  const { addFields, reset, clear, removeField, isInvalidForm, ...form } =
+    useForm(init_form);
 
   useEffect(() => {
     console.log(form);
@@ -28,7 +29,7 @@ export const App = () => {
     <div className={styles.container}>
       <InputCreateField
         onCreate={(name) => {
-          form.addFields({
+          addFields({
             [name]: {
               value: "",
               validation: (value: string) => {
@@ -43,11 +44,32 @@ export const App = () => {
         }}
       />
 
-      <button onClick={form.reset}>Сбросить</button>
+      <button onClick={reset}>Сбросить</button>
 
-      <button onClick={form.clear}>Очистить</button>
+      <button onClick={clear}>Очистить</button>
 
-      <CheckboxNewField form={form} />
+      <CheckboxNewField
+        onChecked={(checked) => {
+          const nameField = "test1";
+
+          if (checked) {
+            addFields({
+              [nameField]: {
+                value: "",
+                validation: (value: string) => {
+                  if (value.trim().length === 0) {
+                    return {
+                      errorMessage: "ошибка. поле обязательно для заполнения",
+                    };
+                  }
+                },
+              },
+            });
+          } else {
+            removeField(nameField);
+          }
+        }}
+      />
 
       {Object.entries(form.handlers).map(([name, config], index) => (
         <div key={index} className={styles.field}>
@@ -63,7 +85,7 @@ export const App = () => {
 
           <button
             onClick={() => {
-              form.removeField(name);
+              removeField(name);
             }}
           >
             Удалить поле
@@ -75,7 +97,7 @@ export const App = () => {
         </div>
       ))}
 
-      {form.isInvalidForm ? (
+      {isInvalidForm ? (
         <div style={{ color: "var(--error)" }}>На форме есть ошибки</div>
       ) : null}
     </div>

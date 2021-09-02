@@ -3,10 +3,12 @@ import { useForm } from "../src";
 import styles from "./app.module.scss";
 
 interface CheckboxNewFieldProps {
-  form: ReturnType<typeof useForm>;
+  onChecked: (checked: boolean) => void;
 }
 
-export const CheckboxNewField: React.FC<CheckboxNewFieldProps> = ({ form }) => {
+export const CheckboxNewField: React.FC<CheckboxNewFieldProps> = ({
+  onChecked,
+}) => {
   const {
     handlers: { newField },
   } = useForm({
@@ -23,24 +25,7 @@ export const CheckboxNewField: React.FC<CheckboxNewFieldProps> = ({ form }) => {
         onChange={({ target }) => {
           newField.onChange(target.checked);
 
-          const nameField = "test1";
-
-          if (target.checked) {
-            form.addFields({
-              [nameField]: {
-                value: "",
-                validation: (value: string) => {
-                  if (value.trim().length === 0) {
-                    return {
-                      errorMessage: "ошибка. поле обязательно для заполнения",
-                    };
-                  }
-                },
-              },
-            });
-          } else {
-            form.removeField(nameField);
-          }
+          onChecked(target.checked);
         }}
       />
 
