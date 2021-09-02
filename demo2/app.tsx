@@ -32,13 +32,12 @@ export const App = () => {
           addFields({
             [name]: {
               value: "",
-              validation: (value: string) => {
-                if (value.trim().length === 0) {
-                  return {
-                    errorMessage: "ошибка. поле обязательно для заполнения",
-                  };
-                }
-              },
+              validation: (value: string) =>
+                value.trim().length === 0
+                  ? {
+                      errorMessage: "ошибка. поле обязательно для заполнения",
+                    }
+                  : undefined,
             },
           });
         }}
@@ -56,13 +55,12 @@ export const App = () => {
             addFields({
               [nameField]: {
                 value: "",
-                validation: (value: string) => {
-                  if (value.trim().length === 0) {
-                    return {
-                      errorMessage: "ошибка. поле обязательно для заполнения",
-                    };
-                  }
-                },
+                validation: (value: string) =>
+                  value.trim().length === 0
+                    ? {
+                        errorMessage: "ошибка. поле обязательно для заполнения",
+                      }
+                    : undefined,
               },
             });
           } else {
