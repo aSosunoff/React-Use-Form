@@ -26,7 +26,22 @@ export const App = () => {
 
   return (
     <div className={styles.container}>
-      <InputCreateField form={form} />
+      <InputCreateField
+        onCreate={(name) => {
+          form.addFields({
+            [name]: {
+              value: "",
+              validation: (value: string) => {
+                if (value.trim().length === 0) {
+                  return {
+                    errorMessage: "ошибка. поле обязательно для заполнения",
+                  };
+                }
+              },
+            },
+          });
+        }}
+      />
 
       <button onClick={form.reset}>Сбросить</button>
 

@@ -3,10 +3,12 @@ import { useForm } from "../src";
 import styles from "./app.module.scss";
 
 interface InputCreateFieldProps {
-  form: ReturnType<typeof useForm>;
+  onCreate: (name: string) => void;
 }
 
-export const InputCreateField: React.FC<InputCreateFieldProps> = ({ form }) => {
+export const InputCreateField: React.FC<InputCreateFieldProps> = ({
+  onCreate,
+}) => {
   const {
     values,
     handlers: { name },
@@ -17,28 +19,10 @@ export const InputCreateField: React.FC<InputCreateFieldProps> = ({ form }) => {
     },
   });
 
-  const createNewField = useCallback(
-    (fieldName: string) => {
-      form.addFields({
-        [fieldName]: {
-          value: "",
-          validation: (value: string) => {
-            if (value.trim().length === 0) {
-              return {
-                errorMessage: "ошибка. поле обязательно для заполнения",
-              };
-            }
-          },
-        },
-      });
-    },
-    [form]
-  );
-
   const submit = useCallback(() => {
-    createNewField(values.name);
+    onCreate(values.name);
     reset();
-  }, [createNewField, values.name, reset]);
+  }, [onCreate, values.name, reset]);
 
   const enterHandler = useCallback<
     React.KeyboardEventHandler<HTMLInputElement>
