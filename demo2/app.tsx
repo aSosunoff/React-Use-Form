@@ -18,8 +18,15 @@ export const App = () => {
     name: { value: "" },
   }); */
 
-  const { addFields, reset, clear, removeField, isInvalidForm, ...form } =
-    useForm(init_form);
+  const {
+    addFields,
+    reset,
+    clear,
+    removeField,
+    isInvalidForm,
+    handlers,
+    ...form
+  } = useForm(init_form);
 
   useEffect(() => {
     console.log(form);
@@ -51,25 +58,24 @@ export const App = () => {
         onChecked={(checked) => {
           const nameField = "test1";
 
-          if (checked) {
-            addFields({
-              [nameField]: {
-                value: "",
-                validation: (value: string) =>
-                  value.trim().length === 0
-                    ? {
-                        errorMessage: "ошибка. поле обязательно для заполнения",
-                      }
-                    : undefined,
-              },
-            });
-          } else {
-            removeField(nameField);
-          }
+          checked
+            ? addFields({
+                [nameField]: {
+                  value: "",
+                  validation: (value: string) =>
+                    value.trim().length === 0
+                      ? {
+                          errorMessage:
+                            "ошибка. поле обязательно для заполнения",
+                        }
+                      : undefined,
+                },
+              })
+            : removeField(nameField);
         }}
       />
 
-      {Object.entries(form.handlers).map(([name, config], index) => (
+      {Object.entries(handlers).map(([name, config], index) => (
         <div key={index} className={styles.field}>
           <div>{name}</div>
 
