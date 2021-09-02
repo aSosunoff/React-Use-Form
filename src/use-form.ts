@@ -1,7 +1,6 @@
 import { useInitialFormMemo } from "./hooks/use-initial-form-memo";
 import { useCallback, useMemo, useState } from "react";
 import { Handlers, InitialForm, Values } from "./types";
-/* import { useDidUpdate } from "./hooks/use-did-update"; */
 import { initialFn, reduceConfigTransform } from "./utils";
 
 export const useForm = <T extends InitialForm<any>>(initialForm?: T) => {
@@ -16,10 +15,6 @@ export const useForm = <T extends InitialForm<any>>(initialForm?: T) => {
   const [form, setForm] = useState(() =>
     initialForm ? initialFn(initialForm) : initialFn({})
   );
-
-  /* useDidUpdate(() => {
-    setForm(() => (initialForm ? initialFn(initialForm) : initialFn({})));
-  }, [initialForm]); */
 
   const addFieldsToFormHandler = useCallback(
     (newFields: ReturnType<typeof initialFn>) => {
