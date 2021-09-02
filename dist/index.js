@@ -91,8 +91,6 @@ exports.useForm = void 0;
 var use_initial_form_memo_1 = __webpack_require__(136);
 
 var react_1 = __webpack_require__(297);
-/* import { useDidUpdate } from "./hooks/use-did-update"; */
-
 
 var utils_1 = __webpack_require__(470);
 
@@ -101,7 +99,7 @@ var useForm = function useForm(initialForm) {
       initialFormMemo = _a.initialFormMemo,
       initialFormMemoHandler = _a.initialFormMemoHandler,
       addFieldsToMemoHandler = _a.addFieldsToMemoHandler,
-      removeFieldsFromMemoHandler = _a.removeFieldsFromMemoHandler; //#region
+      removeFieldsFromMemoHandler = _a.removeFieldsFromMemoHandler; //#region form
 
 
   var _b = react_1.useState(function () {
@@ -109,10 +107,6 @@ var useForm = function useForm(initialForm) {
   }),
       form = _b[0],
       setForm = _b[1];
-  /* useDidUpdate(() => {
-    setForm(() => (initialForm ? initialFn(initialForm) : initialFn({})));
-  }, [initialForm]); */
-
 
   var addFieldsToFormHandler = react_1.useCallback(function (newFields) {
     setForm(function (prev) {
