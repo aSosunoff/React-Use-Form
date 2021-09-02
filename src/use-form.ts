@@ -11,7 +11,7 @@ export const useForm = <T extends InitialForm<any>>(initialForm?: T) => {
     removeFieldsFromMemoHandler,
   } = useInitialFormMemo(initialForm);
 
-  //#region
+  //#region form
   const [form, setForm] = useState(() =>
     initialForm ? initialFn(initialForm) : initialFn({})
   );
