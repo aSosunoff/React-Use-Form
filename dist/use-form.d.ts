@@ -1,5 +1,5 @@
 import { Handlers, InitialForm, Values } from "./types";
-export declare const useForm: <T extends InitialForm<any>>(initialForm?: T | undefined) => {
+export declare const useForm: <T extends InitialForm<any> | undefined>(initialForm?: T | undefined) => {
     values: Values<T>;
     handlers: Handlers<T>;
     initialFormHandler: (initialForm: InitialForm<string>) => void;
