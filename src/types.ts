@@ -23,8 +23,8 @@ export type InitialForm<T extends string> = {
   };
 };
 
-export type Values<T extends InitialForm<any>> = { [k in keyof T]: any } &
-  Record<string, any>;
+export type Values<T extends InitialForm<any> | undefined> =
+  T extends InitialForm<any> ? { [k in keyof T]: any } : Record<string, any>;
 
 export type HandlersConfig = {
   value: any;
@@ -37,7 +37,9 @@ export type HandlersConfig = {
   onChange: (value: any) => void;
 };
 
-export type Handlers<T extends InitialForm<any>> = {
-  [k in keyof T]: HandlersConfig;
-} &
-  Record<string, HandlersConfig>;
+export type Handlers<T extends InitialForm<any> | undefined> =
+  T extends InitialForm<any>
+    ? {
+        [k in keyof T]: HandlersConfig;
+      }
+    : Partial<{ [key: string]: HandlersConfig }>;

@@ -3,7 +3,9 @@ import { useCallback, useMemo, useState } from "react";
 import { Handlers, InitialForm, Values } from "./types";
 import { initialFn, reduceConfigTransform } from "./utils";
 
-export const useForm = <T extends InitialForm<any>>(initialForm?: T) => {
+export const useForm = <T extends InitialForm<any> | undefined>(
+  initialForm?: T
+) => {
   const {
     initialFormMemo,
     initialFormMemoHandler,
