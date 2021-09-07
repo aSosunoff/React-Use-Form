@@ -9,9 +9,7 @@ export declare type InitialForm<T extends string> = {
         };
     };
 };
-export declare type Values<T extends InitialForm<any> | undefined> = T extends InitialForm<any> ? {
-    [k in keyof T]: any;
-} : Record<string, any>;
+export declare type Values<T extends InitialForm<any> | undefined> = T extends InitialForm<any> ? Record<keyof T, any> : Partial<Record<string, any>>;
 export declare type HandlersConfig = {
     value: any;
     error: {
@@ -20,8 +18,4 @@ export declare type HandlersConfig = {
     touched: boolean;
     onChange: (value: any) => void;
 };
-export declare type Handlers<T extends InitialForm<any> | undefined> = T extends InitialForm<any> ? {
-    [k in keyof T]: HandlersConfig;
-} : Partial<{
-    [key: string]: HandlersConfig;
-}>;
+export declare type Handlers<T extends InitialForm<any> | undefined> = T extends InitialForm<any> ? Record<keyof T, HandlersConfig> : Partial<Record<string, HandlersConfig>>;
