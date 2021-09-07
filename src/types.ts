@@ -24,7 +24,9 @@ export type InitialForm<T extends string> = {
 };
 
 export type Values<T extends InitialForm<any> | undefined> =
-  T extends InitialForm<any> ? { [k in keyof T]: any } : Record<string, any>;
+  T extends InitialForm<any>
+    ? Record<keyof T, any>
+    : Partial<Record<string, any>>;
 
 export type HandlersConfig = {
   value: any;
@@ -39,7 +41,5 @@ export type HandlersConfig = {
 
 export type Handlers<T extends InitialForm<any> | undefined> =
   T extends InitialForm<any>
-    ? {
-        [k in keyof T]: HandlersConfig;
-      }
-    : Partial<{ [key: string]: HandlersConfig }>;
+    ? Record<keyof T, HandlersConfig>
+    : Partial<Record<string, HandlersConfig>>;
