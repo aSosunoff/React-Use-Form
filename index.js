@@ -838,7 +838,7 @@ exports.useInitialFormMemo = useInitialFormMemo;
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.useForm = void 0;
+exports.valuesKeyExists = exports.handlersKeyExists = exports.useForm = void 0;
 
 var use_form_1 = __webpack_require__(501);
 
@@ -846,6 +846,24 @@ Object.defineProperty(exports, "useForm", ({
   enumerable: true,
   get: function get() {
     return use_form_1.useForm;
+  }
+}));
+
+var handlers_key_exists_1 = __webpack_require__(692);
+
+Object.defineProperty(exports, "handlersKeyExists", ({
+  enumerable: true,
+  get: function get() {
+    return handlers_key_exists_1.handlersKeyExists;
+  }
+}));
+
+var values_key_exists_1 = __webpack_require__(209);
+
+Object.defineProperty(exports, "valuesKeyExists", ({
+  enumerable: true,
+  get: function get() {
+    return values_key_exists_1.valuesKeyExists;
   }
 }));
 
@@ -1082,6 +1100,44 @@ var initialFn = function initialFn(initialForm) {
 };
 
 exports.initialFn = initialFn;
+
+/***/ }),
+
+/***/ 692:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.handlersKeyExists = void 0;
+
+var handlersKeyExists = function handlersKeyExists(handlers) {
+  return Boolean(Object.keys(handlers).length);
+};
+
+exports.handlersKeyExists = handlersKeyExists;
+
+/***/ }),
+
+/***/ 209:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.valuesKeyExists = void 0;
+
+var valuesKeyExists = function valuesKeyExists(values) {
+  return Boolean(Object.keys(values).length);
+};
+
+exports.valuesKeyExists = valuesKeyExists;
 
 /***/ }),
 
